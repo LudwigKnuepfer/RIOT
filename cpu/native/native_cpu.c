@@ -25,6 +25,8 @@
 #endif
 #include <err.h>
 
+#include <valgrind/valgrind.h>
+
 #include "kernel_internal.h"
 #include "sched.h"
 
@@ -53,6 +55,9 @@ char *thread_stack_init(void (*task_func)(void), void *stack_start, int stacksiz
 {
     unsigned int *stk;
     ucontext_t *p;
+
+    VALGRIND_STACK_REGISTER(stack_start, stack_start + stacksize);
+    DEBUG("VALGRIND_STACK_REGISTER(%p, %p)\n", stack_start, (void*)((int)stack_start + stacksize));
 
     DEBUG("thread_stack_init()\n");
 
@@ -144,6 +149,7 @@ void native_cpu_init()
     end_context.uc_stack.ss_size = SIGSTKSZ;
     end_context.uc_stack.ss_flags = 0;
     makecontext(&end_context, sched_task_exit, 0);
+    VALGRIND_STACK_REGISTER(__end_stack, __end_stack + sizeof(__end_stack));
 
     DEBUG("RIOT native cpu initialized.");
 }
