@@ -18,6 +18,8 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#include <valgrind/valgrind.h>
+
 // __USE_GNU for gregs[REG_EIP] access under Linux
 #define __USE_GNU
 #include <signal.h>
@@ -433,6 +435,8 @@ void native_interrupt_init(void)
     if (process_heap_address == NULL) {
         err(EXIT_FAILURE, "native_interrupt_init: malloc");
     }
+
+    VALGRIND_STACK_REGISTER(__isr_stack, __isr_stack + sizeof(__isr_stack));
 
     native_interrupts_enabled = 1;
     _native_sigpend = 0;
