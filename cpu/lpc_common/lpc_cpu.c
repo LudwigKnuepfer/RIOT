@@ -12,12 +12,13 @@
 #include "cpu.h"
 #include "irq.h"
 
-__attribute__((naked,noreturn)) void arm_reset(void)
+__attribute__((naked, noreturn)) void arm_reset(void)
 {
     disableIRQ();
     WDTC = 0x0FFFF;
     WDMOD = 0x03;
-    WDFEED= 0xAA;
-    WDFEED= 0x55;
-    while(1);
+    WDFEED = 0xAA;
+    WDFEED = 0x55;
+
+    while (1);
 }

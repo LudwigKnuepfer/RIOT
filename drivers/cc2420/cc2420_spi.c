@@ -13,17 +13,19 @@
 #include "irq.h"
 
 /* reg */
-void cc2420_write_reg(uint8_t addr, uint16_t value) {
+void cc2420_write_reg(uint8_t addr, uint16_t value)
+{
     unsigned int cpsr = disableIRQ();
     cc2420_spi_select();
     cc2420_txrx(addr | CC2420_WRITE_ACCESS);
-    cc2420_txrx((uint8_t) (value >> 8));
-    cc2420_txrx((uint8_t) (value & 0xFF));
+    cc2420_txrx((uint8_t)(value >> 8));
+    cc2420_txrx((uint8_t)(value & 0xFF));
     cc2420_spi_unselect();
     restoreIRQ(cpsr);
 }
 
-uint16_t cc2420_read_reg(uint8_t addr) {
+uint16_t cc2420_read_reg(uint8_t addr)
+{
     uint16_t result;
     unsigned int cpsr = disableIRQ();
     cc2420_spi_select();
@@ -36,7 +38,8 @@ uint16_t cc2420_read_reg(uint8_t addr) {
     return result;
 }
 
-uint8_t cc2420_strobe(uint8_t c) {
+uint8_t cc2420_strobe(uint8_t c)
+{
     uint8_t result;
     unsigned int cpsr = disableIRQ();
     cc2420_spi_select();
@@ -47,29 +50,35 @@ uint8_t cc2420_strobe(uint8_t c) {
 }
 
 /* ram */
-uint16_t cc2420_read_ram(uint16_t addr, uint8_t* buffer, uint16_t len) {
+uint16_t cc2420_read_ram(uint16_t addr, uint8_t *buffer, uint16_t len)
+{
     uint16_t i;
     unsigned int cpsr = disableIRQ();
     cc2420_spi_select();
     cc2420_txrx(CC2420_RAM_ACCESS | (addr & 0x7F));
     cc2420_txrx(((addr >> 1) & 0xC0) | CC2420_RAM_READ_ACCESS);
+
     for (i = 0; i < len; i++) {
         buffer[i] = cc2420_txrx(NOBYTE);
     }
+
     cc2420_spi_unselect();
     restoreIRQ(cpsr);
     return i;
 }
 
-uint16_t cc2420_write_ram(uint16_t addr, uint8_t* buffer, uint16_t len) {
+uint16_t cc2420_write_ram(uint16_t addr, uint8_t *buffer, uint16_t len)
+{
     uint16_t i;
     unsigned int cpsr = disableIRQ();
     cc2420_spi_select();
     cc2420_txrx(CC2420_RAM_ACCESS | (addr & 0x7F));
     cc2420_txrx(((addr >> 1) & 0xC0) | CC2420_RAM_WRITE_ACCESS);
+
     for (i = 0; i < len; i++) {
         cc2420_txrx(buffer[i]);
     }
+
     cc2420_spi_unselect();
     restoreIRQ(cpsr);
     return i;
@@ -77,27 +86,33 @@ uint16_t cc2420_write_ram(uint16_t addr, uint8_t* buffer, uint16_t len) {
 
 /* fifo */
 
-uint16_t cc2420_write_fifo(uint8_t* data, uint16_t data_length) {
+uint16_t cc2420_write_fifo(uint8_t *data, uint16_t data_length)
+{
     uint16_t i;
     unsigned int cpsr = disableIRQ();
     cc2420_spi_select();
     cc2420_txrx(CC2420_REG_TXFIFO | CC2420_WRITE_ACCESS);
+
     for (i = 0; i < data_length; i++) {
         cc2420_txrx(data[i]);
     }
+
     cc2420_spi_unselect();
     restoreIRQ(cpsr);
     return i;
 }
 
-uint16_t cc2420_read_fifo(uint8_t* data, uint16_t data_length) {
+uint16_t cc2420_read_fifo(uint8_t *data, uint16_t data_length)
+{
     uint16_t i;
     unsigned int cpsr = disableIRQ();
     cc2420_spi_select();
     cc2420_txrx(CC2420_REG_RXFIFO | CC2420_READ_ACCESS);
+
     for (i = 0; i < data_length; i++) {
         data[i] = cc2420_txrx(NOBYTE);
     }
+
     cc2420_spi_unselect();
     restoreIRQ(cpsr);
     return i;

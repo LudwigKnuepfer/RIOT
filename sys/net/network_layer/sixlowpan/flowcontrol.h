@@ -61,14 +61,16 @@ typedef struct {
     } recv_win[BORDER_RWS];
 } flowcontrol_stat_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t empty;
     uint8_t type;
     uint8_t next_seq_num;
     uint8_t conftype;
     uint8_t next_exp;
     ipv6_addr_t addr;
-} border_syn_packet_t;
+}
+border_syn_packet_t;
 
 ipv6_addr_t flowcontrol_init(void);
 void flowcontrol_send_over_uart(border_packet_t *packet, int len);

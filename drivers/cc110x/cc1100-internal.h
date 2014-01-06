@@ -35,7 +35,7 @@ and Telematics group (http://cst.mi.fu-berlin.de).
 
 #define FIXED_PKTLEN		(0x00)		///< Fixed length packets, length configured in PKTLEN register.
 #define	VARIABLE_PKTLEN		(0x01)		///< Variable length packets, packet length configured by the first
-										///< byte after synch word.
+///< byte after synch word.
 
 /**
  * @name	Bitmasks for reading out status register values

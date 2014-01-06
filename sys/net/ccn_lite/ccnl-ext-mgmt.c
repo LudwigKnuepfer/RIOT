@@ -538,66 +538,14 @@ Bail:
 }
 
 static int ccnl_mgmt_handle(struct ccnl_relay_s *ccnl, struct ccnl_buf_s *orig,
-        struct ccnl_prefix_s *prefix, struct ccnl_face_s *from, char *cmd,
-        int verified)
+                            struct ccnl_prefix_s *prefix, struct ccnl_face_s *from, char *cmd,
+                            int verified)
 {
     DEBUGMSG(99, "ccnl_mgmt_handle \"%s\"\n", cmd);
+
     if (!verified) {
         ccnl_mgmt_return_msg(ccnl, orig, from,
-                "refused: error signature not verified");
-        return -1;
-    }
-
-    if (!strcmp(cmd, "newface")) {
-        DEBUGMSG(1, "ccnl_mgmt_newface msg\n");
-        ccnl_mgmt_newface(ccnl, orig, prefix, from);
-    } else if (!strcmp(cmd, "prefixreg")) {
-        DEBUGMSG(1, "ccnl_mgmt_prefixreg msg\n");
-        ccnl_mgmt_prefixreg(ccnl, orig, prefix, from);
-    } else {
-        DEBUGMSG(99, "unknown mgmt command %s\n", cmd);
-
-        ccnl_mgmt_return_msg(ccnl, orig, from, "unknown mgmt command");
-        return -1;
-    }
-
-    return 0;
-}
-
-char cmd[500];
-int ccnl_mgmt(struct ccnl_relay_s *ccnl, struct ccnl_buf_s *orig,
-        struct ccnl_prefix_s *prefix, struct ccnl_face_s *from)
-{
-    if (prefix->complen[2] < (int) sizeof(cmd)) {
-        memcpy(cmd, prefix->comp[2], prefix->complen[2]);
-        cmd[prefix->complen[2]] = '\0';
-    } else {
-        strcpy(cmd, "cmd-is-too-long-to-display");
-    }
-
-    DEBUGMSG(99, "ccnl_mgmt request \"%s\"\n", cmd);
-
-    if (ccnl_is_local_addr(from))
-        goto MGMT;
-
-    DEBUGMSG(99, " rejecting because src is not a local addr\n");
-    ccnl_mgmt_return_msg(ccnl, orig, from,
-            "refused: origin of mgmt cmd is not local");
-    return -1;
-
-    MGMT: ccnl_mgmt_handle(ccnl, orig, prefix, from, cmd, 1);
-
-    return 0;
-}
-
-#if 0
-    char *cmd = (char *) prefix->comp[2];
-
-    if (!ccnl_is_local_addr(&from->peer)) {
-        DEBUGMSG(99, "  rejecting because src=%s is not a local addr\n",
-                 ccnl_addr2ascii(&from->peer));
-        ccnl_mgmt_return_msg(ccnl, orig, from,
-                             "refused: origin of mgmt cmd is not local");
+                             "refused: error signature not verified");
         return -1;
     }
 
@@ -617,6 +565,68 @@ int ccnl_mgmt(struct ccnl_relay_s *ccnl, struct ccnl_buf_s *orig,
     }
 
     return 0;
+}
+
+char cmd[500];
+int ccnl_mgmt(struct ccnl_relay_s *ccnl, struct ccnl_buf_s *orig,
+              struct ccnl_prefix_s *prefix, struct ccnl_face_s *from)
+{
+    if (prefix->complen[2] < (int) sizeof(cmd)) {
+        memcpy(cmd, prefix->comp[2], prefix->complen[2]);
+        cmd[prefix->complen[2]] = '\0';
+    }
+    else {
+        strcpy(cmd, "cmd-is-too-long-to-display");
+    }
+
+    DEBUGMSG(99, "ccnl_mgmt request \"%s\"\n", cmd);
+
+    if (ccnl_is_local_addr(from)) {
+        goto MGMT;
+    }
+
+    DEBUGMSG(99, " rejecting because src is not a local addr\n");
+    ccnl_mgmt_return_msg(ccnl, orig, from,
+                         "refused: origin of mgmt cmd is not local");
+    return -1;
+
+MGMT:
+    ccnl_mgmt_handle(ccnl, orig, prefix, from, cmd, 1);
+
+    return 0;
+}
+
+#if 0
+char *cmd = (char *) prefix->comp[2];
+
+if (!ccnl_is_local_addr(&from->peer))
+{
+    DEBUGMSG(99, "  rejecting because src=%s is not a local addr\n",
+             ccnl_addr2ascii(&from->peer));
+    ccnl_mgmt_return_msg(ccnl, orig, from,
+                         "refused: origin of mgmt cmd is not local");
+    return -1;
+}
+
+if (!strcmp(cmd, "newface"))
+{
+    DEBUGMSG(1, "ccnl_mgmt_newface msg\n");
+    ccnl_mgmt_newface(ccnl, orig, prefix, from);
+}
+else if (!strcmp(cmd, "prefixreg"))
+{
+    DEBUGMSG(1, "ccnl_mgmt_prefixreg msg\n");
+    ccnl_mgmt_prefixreg(ccnl, orig, prefix, from);
+}
+else
+{
+    DEBUGMSG(99, "unknown mgmt command %s\n", cmd);
+
+    ccnl_mgmt_return_msg(ccnl, orig, from, "unknown mgmt command");
+    return -1;
+}
+
+return 0;
 }
 #endif
 

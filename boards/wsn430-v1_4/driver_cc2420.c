@@ -1,11 +1,11 @@
-  /*
-   * driver_cc2420.c - Implementation of the board dependent cc2420 functions.
-   * Copyright (C) 2005, 2006, 2007, 2008 by Thomas Hillebrandt and Heiko Will
-   * Copyright (C) 2013 Milan Babel <babel@inf.fu-berlin.de>
-   *
-   * This source code is licensed under the GNU Lesser General Public License,
-   * Version 2.  See the file LICENSE for more details.
-   */
+/*
+ * driver_cc2420.c - Implementation of the board dependent cc2420 functions.
+ * Copyright (C) 2005, 2006, 2007, 2008 by Thomas Hillebrandt and Heiko Will
+ * Copyright (C) 2013 Milan Babel <babel@inf.fu-berlin.de>
+ *
+ * This source code is licensed under the GNU Lesser General Public License,
+ * Version 2.  See the file LICENSE for more details.
+ */
 
 #include <stdio.h>
 
@@ -111,18 +111,22 @@ uint8_t cc2420_txrx(uint8_t data)
     IFG2 &= ~UTXIFG1;
     IFG2 &= ~URXIFG1;
     U1TXBUF = data;
-    while(!(IFG2 & UTXIFG1)) {
+
+    while (!(IFG2 & UTXIFG1)) {
         if (c++ == 1000000) {
             puts("cc2420_txrx alarm()");
         }
     }
+
     /* Wait for Byte received */
     c = 0;
-    while(!(IFG2 & URXIFG1)) {
+
+    while (!(IFG2 & URXIFG1)) {
         if (c++ == 1000000) {
             puts("cc2420_txrx alarm()");
         }
     }
+
     return U1RXBUF;
 }
 
@@ -132,7 +136,8 @@ void cc2420_spi_select(void)
     CC2420_CS_LOW;
 }
 
-void cc2420_spi_unselect(void) {
+void cc2420_spi_unselect(void)
+{
     CC2420_CS_HIGH;
 }
 
@@ -154,7 +159,8 @@ void cc2420_init_interrupts(void)
 void cc2420_spi_init(void)
 {
     // Switch off async UART
-    while(!(U1TCTL & TXEPT));   // Wait for empty UxTXBUF register
+    while (!(U1TCTL & TXEPT));  // Wait for empty UxTXBUF register
+
     IE2 &= ~(URXIE1 + UTXIE1);  // Disable USART1 receive&transmit interrupt
     ME2 &= ~(UTXE1 + URXE1);
     P5DIR |= 0x0A;              // output for CLK and SIMO
@@ -168,14 +174,14 @@ void cc2420_spi_init(void)
     // CKPL works also, but not CKPH+CKPL or none of them!!
     U1CTL |= CHAR + SYNC + MM;
     U1TCTL = CKPH + SSEL1 + SSEL0 + STC;
-    
+
     // Ignore clockrate argument for now, just use clock source/2
     // SMCLK = 8 MHz
     U1BR0 = 0x02;  // Ensure baud rate >= 2
     U1BR1 = 0x00;
     U1MCTL = 0x00; // No modulation
     U1RCTL = 0x00; // Reset Receive Control Register
-   
+
     // Enable SPI mode
     ME2 |= USPIE1;
 
@@ -186,9 +192,11 @@ void cc2420_spi_init(void)
 /*
  * CC1100 receive interrupt
  */
-interrupt (PORT1_VECTOR) __attribute__ ((naked)) cc2420_isr(void){
+interrupt(PORT1_VECTOR) __attribute__((naked)) cc2420_isr(void)
+{
     __enter_isr();
-     /* Check IFG */
+
+    /* Check IFG */
     if ((P1IFG & CC2420_GDO2_PIN) != 0) {
         puts("rx interrupt");
         P1IFG &= ~CC2420_GDO2_PIN;
@@ -199,7 +207,8 @@ interrupt (PORT1_VECTOR) __attribute__ ((naked)) cc2420_isr(void){
         puts("[CC2420] rxfifo overflow");
         //P1IE &= ~CC2420_GDO0_PIN;                // Disable interrupt for GDO0
         P1IFG &= ~CC2420_GDO0_PIN;                // Clear IFG for GDO0
-    } else if ((P1IFG & CC2420_SFD_PIN) != 0) {
+    }
+    else if ((P1IFG & CC2420_SFD_PIN) != 0) {
         puts("sfd interrupt");
         P1IFG &= ~CC2420_SFD_PIN;
         cc2420_switch_to_rx();
@@ -209,5 +218,6 @@ interrupt (PORT1_VECTOR) __attribute__ ((naked)) cc2420_isr(void){
         puts("cc2420_isr(): unexpected IFG!");
         /* Should not occur - only GDO1 and GDO2 interrupts are enabled */
     }
+
     __exit_isr();
 }

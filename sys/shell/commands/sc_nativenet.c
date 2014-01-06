@@ -10,7 +10,7 @@
  * @ingroup shell_commands
  * @{
  * @file    sc_nativenet.c
- * @brief   provides shell commands to configure nativenet transceiver 
+ * @brief   provides shell commands to configure nativenet transceiver
  * @author  Ludwig Ortmann <ludwig.ortmann@fu-berlin.de>
  * @}
  */
@@ -100,7 +100,7 @@ void _nativenet_send_handler(char *pkt)
             p.dst = addr;
             mesg.type = SND_PKT;
             mesg.content.ptr = (char *)&tcmd;
-            printf("[nativenet] Sending packet of length %"PRIu16" to %"PRIu16": %s\n", p.length, p.dst, (char*) p.data);
+            printf("[nativenet] Sending packet of length %"PRIu16" to %"PRIu16": %s\n", p.length, p.dst, (char *) p.data);
             msg_send_receive(&mesg, &mesg, transceiver_pid);
             response = mesg.content.value;
             printf("[nativenet] Packet sent: %"PRIi8"\n", response);

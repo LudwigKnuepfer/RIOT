@@ -950,7 +950,8 @@ int aes_encrypt(cipher_context_t *context, uint8_t *plainBlock,
     AES_KEY aeskey;
     const AES_KEY *key = &aeskey;
     res = aes_set_encrypt_key((unsigned char *)context->context,
-                                   AES_KEY_SIZE * 8, &aeskey);
+                              AES_KEY_SIZE * 8, &aeskey);
+
     if (res < 0) {
         return res;
     }

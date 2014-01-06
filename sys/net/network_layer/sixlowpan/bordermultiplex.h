@@ -36,36 +36,45 @@
 /* ethertypes for L3 packets */
 #define BORDER_ETHERTYPE_IPV6     (0x86DD)
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t empty;
     uint8_t type;
     uint8_t seq_num;
-} border_packet_t;
+}
+border_packet_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t empty;
     uint8_t type;
     uint8_t seq_num;
     uint16_t ethertype;
-} border_l3_header_t;
+}
+border_l3_header_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t empty;
     uint8_t type;
     uint8_t seq_num;
     uint8_t conftype;
-} border_conf_header_t;
+}
+border_conf_header_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t empty;
     uint8_t type;
     uint8_t seq_num;
     uint8_t conftype;
     uint16_t version;
     ipv6_addr_t addr;
-} border_addr_packet_t;
+}
+border_addr_packet_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t empty;
     uint8_t type;
     uint8_t seq_num;
@@ -78,7 +87,8 @@ typedef struct __attribute__((packed)) {
         uint8_t comp;
         uint16_t lifetime;
     } context;
-} border_context_packet_t;
+}
+border_context_packet_t;
 
 #define BORDER_BUFFER_SIZE (sizeof(border_l3_header_t) + IPV6_MTU)
 

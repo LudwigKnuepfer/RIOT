@@ -26,7 +26,8 @@ static void (*isr_funcs[11])(void) = {
     spi_isr
 };
 
-void register_isr(uint8_t interrupt, void (*isr)(void)) {
+void register_isr(uint8_t interrupt, void (*isr)(void))
+{
     if (interrupt <= MAX_IRQ_INDEX) {
         isr_funcs[interrupt] = isr;
     }

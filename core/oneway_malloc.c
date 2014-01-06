@@ -16,9 +16,9 @@
  *
  * @file        oneway_malloc.c
  * @brief       Simple malloc wrapper for SBRK
- * 
+ *
  * Simple malloc implementation for plattforms without malloc in libc.
- * 
+ *
  * @author      Kaspar Schleiser <kaspar.schleiser@fu-berlin.de>
  *
  * @}
@@ -39,7 +39,7 @@ void *_malloc(size_t size)
 
     DEBUG("_malloc(): allocating block of size %u at 0x%X.\n", (unsigned int) size, (unsigned int)ptr);
 
-    if (ptr != (void*) - 1) {
+    if (ptr != (void *) - 1) {
         return ptr;
     }
     else {
@@ -58,9 +58,11 @@ void *_realloc(void *ptr, size_t size)
 void *_calloc(int size, size_t cnt)
 {
     void *mem = _malloc(size * cnt);
+
     if (mem) {
         memset(mem, 0, size * cnt);
     }
+
     return mem;
 }
 

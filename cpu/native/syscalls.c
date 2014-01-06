@@ -53,19 +53,20 @@ void _native_syscall_leave()
 {
     _native_in_syscall--;
     DEBUG("< _native_in_syscall: %d\n", _native_in_syscall);
+
     if (
-            (_native_sigpend > 0)
-            && (_native_in_isr == 0)
-            && (_native_in_syscall == 0)
-            && (native_interrupts_enabled == 1)
-       )
-    {
+        (_native_sigpend > 0)
+        && (_native_in_isr == 0)
+        && (_native_in_syscall == 0)
+        && (native_interrupts_enabled == 1)
+    ) {
         _native_in_isr = 1;
         _native_cur_ctx = (ucontext_t *)active_thread->sp;
         native_isr_context.uc_stack.ss_sp = __isr_stack;
         native_isr_context.uc_stack.ss_size = SIGSTKSZ;
         native_isr_context.uc_stack.ss_flags = 0;
         makecontext(&native_isr_context, native_irq_handler, 0);
+
         if (swapcontext(_native_cur_ctx, &native_isr_context) == -1) {
             _native_syscall_leave(EXIT_FAILURE, "thread_yield: swapcontext");
         }
@@ -95,7 +96,8 @@ ssize_t write(int fd, const void *buf, size_t count)
     return r;
 }
 
-int putchar(int c) {
+int putchar(int c)
+{
     write(STDOUT_FILENO, &c, 1);
     return 0;
 }
@@ -103,7 +105,7 @@ int putchar(int c) {
 int puts(const char *s)
 {
     int r;
-    r = write(STDOUT_FILENO, (char*)s, strlen(s));
+    r = write(STDOUT_FILENO, (char *)s, strlen(s));
     putchar('\n');
     return r;
 }
@@ -114,20 +116,28 @@ char *make_message(const char *format, va_list argp)
     int size = 100;
     char *message, *temp;
 
-    if ((message = malloc(size)) == NULL)
+    if ((message = malloc(size)) == NULL) {
         return NULL;
+    }
 
     while (1) {
         n = vsnprintf(message, size, format, argp);
-        if (n < 0)
+
+        if (n < 0) {
             return NULL;
-        if (n < size)
+        }
+
+        if (n < size) {
             return message;
+        }
+
         size = n + 1;
+
         if ((temp = realloc(message, size)) == NULL) {
             free(message);
             return NULL;
-        } else {
+        }
+        else {
             message = temp;
         }
     }
@@ -140,9 +150,11 @@ int printf(const char *format, ...)
     char *m;
 
     va_start(argp, format);
+
     if ((m = make_message(format, argp)) == NULL) {
         err(EXIT_FAILURE, "malloc");
     }
+
     r = write(STDOUT_FILENO, m, strlen(m));
     va_end(argp);
     free(m);
@@ -159,6 +171,7 @@ int vprintf(const char *format, va_list argp)
     if ((m = make_message(format, argp)) == NULL) {
         err(EXIT_FAILURE, "malloc");
     }
+
     r = write(STDOUT_FILENO, m, strlen(m));
     free(m);
 
@@ -176,6 +189,7 @@ void vwarn(const char *fmt, va_list args)
         write(STDERR_FILENO, "malloc\n", 7);
         exit(EXIT_FAILURE);
     }
+
     write(STDERR_FILENO, _progname, strlen(_progname));
     write(STDERR_FILENO, ": ", 2);
     write(STDERR_FILENO, m, strlen(m));
@@ -193,6 +207,7 @@ void vwarnx(const char *fmt, va_list args)
         write(STDERR_FILENO, "malloc\n", 7);
         exit(EXIT_FAILURE);
     }
+
     write(STDERR_FILENO, _progname, strlen(_progname));
     write(STDERR_FILENO, ": ", 2);
     write(STDERR_FILENO, m, strlen(m));

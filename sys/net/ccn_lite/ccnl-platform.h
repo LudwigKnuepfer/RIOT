@@ -41,7 +41,7 @@ void ccnl_get_timeval(struct timeval *tv);
 long timevaldelta(struct timeval *a, struct timeval *b);
 
 void *ccnl_set_timer(int usec, void (*fct)(void *aux1, void *aux2),
-               void *aux1, void *aux2);
+                     void *aux1, void *aux2);
 
 void
 ccnl_rem_timer(void *h);

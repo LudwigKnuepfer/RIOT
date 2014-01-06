@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2009 Freie Universität Berlin
- * Copyright (C) 2013 INRIA 
+ * Copyright (C) 2013 INRIA
  *
  * This file is subject to the terms and conditions of the GNU Lesser General
  * Public License. See the file LICENSE in the top level directory for more
@@ -44,7 +44,7 @@
 
 #define PACKET_LENGTH               (0x3E)      ///< Packet length = 62 Bytes.
 #define CC1100_SYNC_WORD_TX_TIME   (90000)      // loop count (max. timeout ~ 15 ms) to wait for
-                                                // sync word to be transmitted (GDO2 from low to high)
+// sync word to be transmitted (GDO2 from low to high)
 /**
  * @name    Defines used as state values for state machine
  * @{

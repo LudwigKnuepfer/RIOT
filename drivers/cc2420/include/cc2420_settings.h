@@ -54,29 +54,29 @@
 /* Register command addresses */
 #define CC2420_REG_MAIN         0x10
 #define CC2420_REG_MDMCTRL0     0x11
-    #define CC2420_ADR_DECODE          0x800
-    #define CC2420_RES_FRM_MODE        0x2000
-    #define CC2420_PAN_COORD           0x1000
-    #define CC2420_AUTOCRC             0x20
-    #define CC2420_AUTOACK             0x10
+#define CC2420_ADR_DECODE          0x800
+#define CC2420_RES_FRM_MODE        0x2000
+#define CC2420_PAN_COORD           0x1000
+#define CC2420_AUTOCRC             0x20
+#define CC2420_AUTOACK             0x10
 #define CC2420_REG_MDMCTRL1     0x12
 #define CC2420_REG_RSSI         0x13
-    #define CC2420_CCATHR_MASK         0xFF00
-    #define CC2420_RSSI_MASK           0xFF
+#define CC2420_CCATHR_MASK         0xFF00
+#define CC2420_RSSI_MASK           0xFF
 #define CC2420_REG_SYNCWORD     0x14
 #define CC2420_REG_TXCTRL       0x15
-    #define CC2420_PALEVEL_MASK        0x1F
+#define CC2420_PALEVEL_MASK        0x1F
 #define CC2420_REG_RXCTRL0      0x16
 #define CC2420_REG_RXCTRL1      0x17
-    #define CC2420_RXBPF_LOCUR         0x2000
+#define CC2420_RXBPF_LOCUR         0x2000
 #define CC2420_REG_FSCTRL       0x18
-    #define CC2420_FREQ_MASK           0x3FF
+#define CC2420_FREQ_MASK           0x3FF
 #define CC2420_REG_SECCTRL0     0x19
-    #define CC2420_RXFIFO_PROTECTION   0x200
+#define CC2420_RXFIFO_PROTECTION   0x200
 #define CC2420_REG_SECCTRL1     0x1A
 #define CC2420_REG_BATTMON      0x1B
 #define CC2420_REG_IOCFG0       0x1C
-    #define CC2420_FIFOPTHR_MASK       0x7F
+#define CC2420_FIFOPTHR_MASK       0x7F
 #define CC2420_REG_IOCFG1       0x1D
 #define CC2420_REG_MANFIDL      0x1E
 #define CC2420_REG_MANFIDH      0x1F

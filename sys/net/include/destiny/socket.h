@@ -85,75 +85,75 @@ typedef uint32_t  socklen_t;    ///< POSIX compatible type for address length.
  * Protocol families, same as address families for now.
  */
 #define PF_UNSPEC       AF_UNSPEC       ///< protocol family
-                                        ///< @see AF_UNSPEC
+///< @see AF_UNSPEC
 #define PF_LOCAL        AF_LOCAL        ///< protocol family
-                                        ///< @see AF_LOCAL
+///< @see AF_LOCAL
 #define PF_UNIX         PF_LOCAL        ///< alias for PF_LOCAL for backward compatibility
 #define PF_INET         AF_INET         ///< protocol family
-                                        ///< @see AF_INET
+///< @see AF_INET
 #define PF_IMPLINK      AF_IMPLINK      ///< protocol family
-                                        ///< @see AF_IMPLINK
+///< @see AF_IMPLINK
 #define PF_PUP          AF_PUP          ///< protocol family
-                                        ///< @see AF_PUP
+///< @see AF_PUP
 #define PF_CHAOS        AF_CHAOS        ///< protocol family
-                                        ///< @see AF_CHAOS
+///< @see AF_CHAOS
 #define PF_NS           AF_NS           ///< protocol family
-                                        ///< @see AF_NS
+///< @see AF_NS
 #define PF_ISO          AF_ISO          ///< protocol family
-                                        ///< @see AF_ISO
+///< @see AF_ISO
 #define PF_OSI          AF_OSI          ///< protocol family
-                                        ///< @see AF_OSI
+///< @see AF_OSI
 #define PF_ECMA         AF_ECMA         ///< protocol family
-                                        ///< @see AF_ECMA
+///< @see AF_ECMA
 #define PF_DATAKIT      AF_DATAKIT      ///< protocol family
-                                        ///< @see AF_DATAKIT
+///< @see AF_DATAKIT
 #define PF_CCITT        AF_CCITT        ///< protocol family
-                                        ///< @see AF_CCITT
+///< @see AF_CCITT
 #define PF_SNA          AF_SNA          ///< protocol family
-                                        ///< @see AF_SNA
+///< @see AF_SNA
 #define PF_DECnet       AF_DECnet       ///< protocol family
-                                        ///< @see AF_DECnet
+///< @see AF_DECnet
 #define PF_DLI          AF_DLI          ///< protocol family
-                                        ///< @see AF_DLI
+///< @see AF_DLI
 #define PF_LAT          AF_LAT          ///< protocol family
-                                        ///< @see AF_LAT
+///< @see AF_LAT
 #define PF_HYLINK       AF_HYLINK       ///< protocol family
-                                        ///< @see AF_HYLINK
+///< @see AF_HYLINK
 #define PF_APPLETALK    AF_APPLETALK    ///< protocol family
-                                        ///< @see AF_APPLETALK
+///< @see AF_APPLETALK
 #define PF_ROUTE        AF_ROUTE        ///< protocol family
-                                        ///< @see AF_ROUTE
+///< @see AF_ROUTE
 #define PF_LINK         AF_LINK         ///< protocol family
-                                        ///< @see AF_LINK
+///< @see AF_LINK
 #define PF_XTP          pseudo_AF_XTP   ///< protocol family (no address family defined, only PF)
-                                        ///< @see pseudo_AF_XTP
+///< @see pseudo_AF_XTP
 #define PF_COIP         AF_COIP         ///< protocol family
-                                        ///< @see AF_COIP
+///< @see AF_COIP
 #define PF_CNT          AF_CNT          ///< protocol family
-                                        ///< @see AF_CNT
+///< @see AF_CNT
 #define PF_SIP          AF_SIP          ///< protocol family
-                                        ///< @see AF_SIP
+///< @see AF_SIP
 #define PF_IPX          AF_IPX          ///< protocol family (same format as AF_NS)
-                                        ///< @see AF_IPX
-                                        ///< @see AF_NS
+///< @see AF_IPX
+///< @see AF_NS
 #define PF_RTIP         pseudo_AF_RTIP  ///< protocol family (same format as AF_INET)
-                                        ///< @see pseudo_AF_RTIP
+///< @see pseudo_AF_RTIP
 #define PF_PIP          pseudo_AF_PIP   ///< protocol family
-                                        ///< @see pseudo_AF_PIP
+///< @see pseudo_AF_PIP
 #define PF_ISDN         AF_ISDN         ///< protocol family
-                                        ///< @see AF_ISDN
+///< @see AF_ISDN
 #define PF_KEY          pseudo_AF_KEY   ///< protocol family
-                                        ///< @see pseudo_AF_KEY
+///< @see pseudo_AF_KEY
 #define PF_INET6        AF_INET6        ///< protocol family
-                                        ///< @see AF_INET6
+///< @see AF_INET6
 #define PF_NATM         AF_NATM         ///< protocol family
-                                        ///< @see AF_NATM
+///< @see AF_NATM
 #define PF_ATM          AF_ATM          ///< protocol family
-                                        ///< @see AF_ATM
+///< @see AF_ATM
 #define PF_NETGRAPH     AF_NETGRAPH     ///< protocol family
-                                        ///< @see AF_NETGRAPH
+///< @see AF_NETGRAPH
 #define PF_MAX          AF_MAX          ///< maximum of protocol families
-                                        ///< @see AF_MAX
+///< @see AF_MAX
 
 #define DESTINY_SOCKET_STATIC_MSS       48  ///< Static TCP maxmimum segment size.
 
@@ -170,12 +170,14 @@ typedef uint32_t  socklen_t;    ///< POSIX compatible type for address length.
 /**
  * Socket address type for IPv6 communication.
  */
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t     sin6_family;    ///< set to AF_INET6
     uint16_t    sin6_port;      ///< transport layer port number
     uint32_t    sin6_flowinfo;  ///< IPv6 flow information
     ipv6_addr_t sin6_addr;      ///< IPv6 address
-} sockaddr6_t;
+}
+sockaddr6_t;
 
 /**
  * Creates new socket for communication in family *domain*, of type *type*,

@@ -127,13 +127,13 @@ void ccnl_ll_TX(struct ccnl_relay_s *ccnl, struct ccnl_if_s *ifc,
 void ccnl_ageing(void *relay, void *aux)
 {
     ccnl_do_ageing(relay, aux);
-    ccnl_set_timer(CCNL_CHECK_TIMEOUT_SEC * (1000*1000) + CCNL_CHECK_TIMEOUT_USEC, ccnl_ageing, relay, 0);
+    ccnl_set_timer(CCNL_CHECK_TIMEOUT_SEC * (1000 * 1000) + CCNL_CHECK_TIMEOUT_USEC, ccnl_ageing, relay, 0);
 }
 
 void ccnl_retransmit(void *relay, void *aux)
 {
     ccnl_do_retransmit(relay, aux);
-    ccnl_set_timer(CCNL_CHECK_RETRANSMIT_SEC * (1000*1000) + CCNL_CHECK_RETRANSMIT_USEC, ccnl_retransmit, relay, 0);
+    ccnl_set_timer(CCNL_CHECK_RETRANSMIT_SEC * (1000 * 1000) + CCNL_CHECK_RETRANSMIT_USEC, ccnl_retransmit, relay, 0);
 }
 
 // ----------------------------------------------------------------------
@@ -199,7 +199,7 @@ void ccnl_relay_config(struct ccnl_relay_s *relay, int max_cache_entries, int fi
     }
 
     /* create default boardcast face on transceiver interface */
-    struct ccnl_face_s * f = ccnl_get_face_or_create(relay, RIOT_TRANS_IDX, RIOT_BROADCAST);
+    struct ccnl_face_s *f = ccnl_get_face_or_create(relay, RIOT_TRANS_IDX, RIOT_BROADCAST);
     f->flags |= CCNL_FACE_FLAGS_STATIC;
     i->broadcast_face = f;
 
@@ -331,11 +331,14 @@ int ccnl_io_loop(struct ccnl_relay_s *ccnl)
 
     while (!ccnl->halt_flag) {
         hwtimer_id = hwtimer_set(HWTIMER_TICKS(us), ccnl_timeout_callback, ccnl);
+
         if (hwtimer_id == -1) {
             puts("NO MORE TIMERS!");
-        } else {
+        }
+        else {
             //DEBUGMSG(1, "hwtimer_id is %d\n", hwtimer_id);
         }
+
         msg_receive(&in);
         //DEBUGMSG(1, "%s Packet waiting, us was %lu\n", riot_ccnl_event_to_string(in.type), us);
 
@@ -375,6 +378,7 @@ int ccnl_io_loop(struct ccnl_relay_s *ccnl)
                 break;
 
 #if RIOT_CCNL_POPULATE
+
             case (CCNL_RIOT_POPULATE):
                 hwtimer_remove(hwtimer_id);
                 DEBUGMSG(1, "\tSrc:\t%u\n", in.sender_pid);
@@ -383,16 +387,21 @@ int ccnl_io_loop(struct ccnl_relay_s *ccnl)
                 handle_populate_cache();
                 break;
 #endif
+
             case (CCNL_RIOT_PRINT_STAT):
                 hwtimer_remove(hwtimer_id);
+
                 for (struct ccnl_face_s *f = ccnl->faces; f; f = f->next) {
                     ccnl_face_print_stat(f);
                 }
+
                 break;
+
             case (CCNL_RIOT_TIMEOUT):
                 timeout = ccnl_run_events();
                 us = timeout->tv_sec * 1000 * 1000 + timeout->tv_usec;
                 break;
+
             default:
                 hwtimer_remove(hwtimer_id);
                 DEBUGMSG(1, "%s Packet waiting\n", riot_ccnl_event_to_string(in.type));

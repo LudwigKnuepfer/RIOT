@@ -63,7 +63,7 @@ int ccnl_riot_client_get(unsigned int relay_pid, char *name, char *reply_buf);
  * @return the length of the reply message stored in reply_buf
  */
 int ccnl_riot_client_publish(unsigned int relay_pid, char *prefix, char *faceid,
-        char *type, unsigned char *reply_buf);
+                             char *type, unsigned char *reply_buf);
 
 /**
  * @brief  lower layer function to register a new face in the relay
@@ -82,7 +82,7 @@ int ccnl_riot_client_publish(unsigned int relay_pid, char *prefix, char *faceid,
  * @return the length of the reply message stored in reply_buf
  */
 int ccnl_riot_client_new_face(unsigned int relay_pid, char *type, char *faceid,
-        unsigned char *reply_buf);
+                              unsigned char *reply_buf);
 
 /**
  * @brief lower layer function to register a new prefix
@@ -101,7 +101,7 @@ int ccnl_riot_client_new_face(unsigned int relay_pid, char *type, char *faceid,
  * @return the length of the reply message stored in reply_buf
  */
 int ccnl_riot_client_register_prefix(unsigned int relay_pid, char *prefix,
-        char *faceid, unsigned char *reply_buf);
+                                     char *faceid, unsigned char *reply_buf);
 
 /**
  * @}

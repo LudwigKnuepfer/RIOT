@@ -76,6 +76,7 @@ static int update_shortterm(void)
         DEBUG("update_shortterm: shortterm_queue_root.next == NULL - dont know what to do here\n");
         return 0;
     }
+
     if (hwtimer_id != -1) {
         /* there is a running hwtimer for us */
         if (hwtimer_next_absolute != shortterm_queue_root.next->priority) {
@@ -98,13 +99,13 @@ static int update_shortterm(void)
     uint32_t now = HWTIMER_TICKS_TO_US(hwtimer_now());
 
     /* make sure the longterm_tick_timer does not get truncated */
-    if (((vtimer_t*)shortterm_queue_root.next)->action != vtimer_tick) {
+    if (((vtimer_t *)shortterm_queue_root.next)->action != vtimer_tick) {
         /* the next vtimer to schedule is the long term tick */
         /* it has a shortterm offset of longterm_tick_start */
         next += longterm_tick_start;
     }
 
-    if((next -  HWTIMER_TICKS_TO_US(VTIMER_THRESHOLD) - now) > MICROSECONDS_PER_TICK ) {
+    if ((next -  HWTIMER_TICKS_TO_US(VTIMER_THRESHOLD) - now) > MICROSECONDS_PER_TICK) {
         DEBUG("truncating next (next -  HWTIMER_TICKS_TO_US(VTIMER_THRESHOLD) - now): %lu\n", (next -  HWTIMER_TICKS_TO_US(VTIMER_THRESHOLD) - now));
         next = now +  HWTIMER_TICKS_TO_US(VTIMER_BACKOFF);
     }
@@ -164,13 +165,13 @@ void vtimer_callback(void *ptr)
     DEBUG("vtimer_callback(): Shooting %" PRIu32 ".\n", timer->absolute.microseconds);
 
     /* shoot timer */
-    if (timer->action == (void (*)(void *)) msg_send_int) {
+    if (timer->action == (void ( *)(void *)) msg_send_int) {
         msg_t msg;
         msg.type = MSG_TIMER;
         msg.content.value = (unsigned int) timer->arg;
         msg_send_int(&msg, timer->pid);
     }
-    else if (timer->action == (void (*)(void *)) thread_wakeup){
+    else if (timer->action == (void ( *)(void *)) thread_wakeup) {
         timer->action(timer->arg);
     }
     else if (timer->action == vtimer_tick) {
@@ -285,7 +286,7 @@ int vtimer_init()
 int vtimer_set_wakeup(vtimer_t *t, timex_t interval, int pid)
 {
     int ret;
-    t->action = (void(*)(void *)) thread_wakeup;
+    t->action = (void( *)(void *)) thread_wakeup;
     t->arg = (void *) pid;
     t->absolute = interval;
     t->pid = 0;
@@ -324,7 +325,7 @@ int vtimer_remove(vtimer_t *t)
 
 int vtimer_set_msg(vtimer_t *t, timex_t interval, unsigned int pid, void *ptr)
 {
-    t->action = (void(*)(void *)) msg_send_int;
+    t->action = (void( *)(void *)) msg_send_int;
     t->arg = ptr;
     t->absolute = interval;
     t->pid = pid;
@@ -332,7 +333,8 @@ int vtimer_set_msg(vtimer_t *t, timex_t interval, unsigned int pid, void *ptr)
     return 0;
 }
 
-int vtimer_msg_receive_timeout(msg_t *m, timex_t timeout) {
+int vtimer_msg_receive_timeout(msg_t *m, timex_t timeout)
+{
     msg_t timeout_message;
     timeout_message.type = MSG_TIMER;
     timeout_message.content.ptr = (char *) &timeout_message;
@@ -340,10 +342,12 @@ int vtimer_msg_receive_timeout(msg_t *m, timex_t timeout) {
     vtimer_t t;
     vtimer_set_msg(&t, timeout, thread_pid, &timeout_message);
     msg_receive(m);
+
     if (m->type == MSG_TIMER && m->content.ptr == (char *) &timeout_message) {
         /* we hit the timeout */
         return -1;
-    } else {
+    }
+    else {
         vtimer_remove(&t);
         return 1;
     }
@@ -351,11 +355,13 @@ int vtimer_msg_receive_timeout(msg_t *m, timex_t timeout) {
 
 #if ENABLE_DEBUG
 
-void vtimer_print_short_queue(){
+void vtimer_print_short_queue()
+{
     queue_print(&shortterm_queue_root);
 }
 
-void vtimer_print_long_queue(){
+void vtimer_print_long_queue()
+{
     queue_print(&longterm_queue_root);
 }
 

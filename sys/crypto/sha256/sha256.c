@@ -37,7 +37,7 @@
  * @author      Colin Percival
  * @author      Christian Mehlis
  * @author      Rene Kijewski
- * 
+ *
  * @}
  */
 
@@ -63,6 +63,7 @@ static void be32enc_vect(void *dst_, const void *src_, size_t len)
 {
     uint32_t *dst = dst_;
     const uint32_t *src = src_;
+
     for (size_t i = 0; i < len / 4; i++) {
         dst[i] = __builtin_bswap32(src[i]);
     }
@@ -116,6 +117,7 @@ static void sha256_transform(uint32_t *state, const unsigned char block[64])
 
     /* 1. Prepare message schedule W. */
     be32dec_vect(W, block, 64);
+
     for (int i = 16; i < 64; i++) {
         W[i] = s1(W[i - 2]) + W[i - 7] + s0(W[i - 15]) + W[i - 16];
     }

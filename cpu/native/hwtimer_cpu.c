@@ -74,6 +74,7 @@ int timeval_subtract(struct timeval *result, struct timeval *x, struct timeval *
         y->tv_usec -= 1000000 * nsec;
         y->tv_sec += nsec;
     }
+
     if (x->tv_usec - y->tv_usec > 1000000) {
         int nsec = (x->tv_usec - y->tv_usec) / 1000000;
         y->tv_usec += 1000000 * nsec;
@@ -107,7 +108,7 @@ void ticks2tv(unsigned long ticks, struct timeval *tp)
 unsigned long tv2ticks(struct timeval *tp)
 {
     /* TODO: check for overflow */
-    return((tp->tv_sec * HWTIMER_SPEED) + (tp->tv_usec));
+    return ((tp->tv_sec * HWTIMER_SPEED) + (tp->tv_usec));
 }
 
 /**
@@ -116,7 +117,7 @@ unsigned long tv2ticks(struct timeval *tp)
 unsigned long ts2ticks(struct timespec *tp)
 {
     /* TODO: check for overflow */
-    return((tp->tv_sec * HWTIMER_SPEED) + (tp->tv_nsec / 1000));
+    return ((tp->tv_sec * HWTIMER_SPEED) + (tp->tv_nsec / 1000));
 }
 
 /**
@@ -126,12 +127,14 @@ void schedule_timer(void)
 {
     /* try to find *an active* timer */
     next_timer = -1;
+
     for (int i = 0; i < ARCH_MAXTIMERS; i++) {
         if (native_hwtimer_isset[i] == 1) {
             next_timer = i;
             break;
         }
     }
+
     if (next_timer == -1) {
         DEBUG("schedule_timer(): no valid timer found - nothing to schedule\n");
         // TODO: unset timer
@@ -157,12 +160,15 @@ void schedule_timer(void)
     memset(&result, 0, sizeof(result));
 
     int retval = timeval_subtract(&result.it_value, &native_hwtimer[next_timer].it_value, &now);
+
     if (retval || (tv2ticks(&result.it_value) < HWTIMERMINOFFSET)) {
         /* the timeout has happened already, schedule an interrupt */
         int sig = SIGALRM;
+
         if (real_write(_sig_pipefd[1], &sig, sizeof(int)) == -1) {
             err(EXIT_FAILURE, "schedule_timer(): real_write()");
         }
+
         _native_sigpend++;
         return;
     }
@@ -286,7 +292,7 @@ unsigned long hwtimer_arch_now(void)
     native_hwtimer_now = ts2ticks(&t) - time_null;
 
     DEBUG("hwtimer_arch_now(): it is now %lu s %lu ns\n",
-            (unsigned long)t.tv_sec, (unsigned long)t.tv_nsec);
+          (unsigned long)t.tv_sec, (unsigned long)t.tv_nsec);
     DEBUG("hwtimer_arch_now(): returning %lu\n", native_hwtimer_now);
     return native_hwtimer_now;
 }

@@ -6,7 +6,7 @@ static uint32_t ticks = 0;
 
 extern void (*int_handler)(int);
 extern void timer_unset(short timer);
-extern uint16_t overflow_interrupt[ARCH_MAXTIMERS+1];
+extern uint16_t overflow_interrupt[ARCH_MAXTIMERS + 1];
 extern uint16_t timer_round;
 
 void timerA_init(void)
@@ -45,14 +45,16 @@ interrupt(TIMERA1_VECTOR) __attribute__((naked)) timer_isr(void)
     short taiv = TAIV;
 
     if (taiv & TAIV_TAIFG) {
-    } else {
+    }
+    else {
 
-        short timer = (taiv/2);
-        if(overflow_interrupt[timer] == timer_round)
-        {
+        short timer = (taiv / 2);
+
+        if (overflow_interrupt[timer] == timer_round) {
             timer_unset(timer);
             int_handler(timer);
         }
     }
+
     __exit_isr();
 }

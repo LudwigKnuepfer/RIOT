@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 INRIA 
+ * Copyright (C) 2013 INRIA
  *
  * This file is subject to the terms and conditions of the GNU Lesser General
  * Public License. See the file LICENSE in the top level directory for more
@@ -87,7 +87,7 @@ char cc110x_conf[] = {
     0x1C, // BSCFG
     0xC0, // AGCCTRL2
     0x49, // AGCCTRL1, (old value was 0x49 -> made carrier sense less sensitive!)
-          //            0x47 - 7 dB above MAGN_TARGET setting
+    //            0x47 - 7 dB above MAGN_TARGET setting
     0xB2, // AGCCTRL0
     0x87, // WOREVT1
     0x6B, // WOREVT0
@@ -103,16 +103,16 @@ char cc110x_conf[] = {
 
 uint8_t pa_table_index = PATABLE; ///< Current PATABLE Index
 uint8_t pa_table[] = {        ///< PATABLE with available output powers
-              0x00,         ///< -52 dBm
-              0x03,         ///< -30 dBm
-              0x0D,         ///< -20 dBm
-              0x1C,         ///< -15 dBm
-              0x34,         ///< -10 dBm
-              0x57,         ///< - 5 dBm
-              0x3F,         ///< - 1 dBm
-              0x8E,         ///<   0 dBm
-              0x85,         ///< + 5 dBm
-              0xCC,         ///< + 7 dBm
-              0xC6,         ///< + 9 dBm
-              0xC3          ///< +10 dBm
+    0x00,         ///< -52 dBm
+    0x03,         ///< -30 dBm
+    0x0D,         ///< -20 dBm
+    0x1C,         ///< -15 dBm
+    0x34,         ///< -10 dBm
+    0x57,         ///< - 5 dBm
+    0x3F,         ///< - 1 dBm
+    0x8E,         ///<   0 dBm
+    0x85,         ///< + 5 dBm
+    0xCC,         ///< + 7 dBm
+    0xC6,         ///< + 9 dBm
+    0xC3          ///< +10 dBm
 }; // If PATABLE is changed in size, adjust MAX_OUTPUT_POWER definition in CC1100 interface!

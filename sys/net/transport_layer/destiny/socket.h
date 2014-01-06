@@ -14,7 +14,8 @@
 #define INC_PACKET			0
 #define OUT_PACKET			1
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint16_t 		context_id;
     uint32_t 		seq_rcv; // Last received packet values
     uint32_t 		ack_rcv;
@@ -23,9 +24,11 @@ typedef struct __attribute__((packed)) {
     uint32_t		ack_snd;
     uint16_t		wnd_snd;
     uint8_t			hc_type;
-} tcp_hc_context_t;
+}
+tcp_hc_context_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint32_t			send_una;
     uint32_t			send_nxt;
     uint16_t			send_wnd;
@@ -48,18 +51,22 @@ typedef struct __attribute__((packed)) {
 #ifdef TCP_HC
     tcp_hc_context_t	tcp_context;
 #endif
-} tcp_cb_t;
+}
+tcp_cb_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t				domain;
     uint8_t				type;
     uint8_t				protocol;
     tcp_cb_t			tcp_control;
     sockaddr6_t			local_address;
     sockaddr6_t			foreign_address;
-} socket_t;
+}
+socket_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t				socket_id;
     uint8_t				recv_pid;
     uint8_t				send_pid;
@@ -67,7 +74,8 @@ typedef struct __attribute__((packed)) {
     mutex_t				tcp_buffer_mutex;
     socket_t			socket_values;
     uint8_t				tcp_input_buffer[DESTINY_SOCKET_MAX_TCP_BUFFER];
-} socket_internal_t;
+}
+socket_internal_t;
 
 extern socket_internal_t sockets[MAX_SOCKETS];
 

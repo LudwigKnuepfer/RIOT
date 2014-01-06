@@ -8,7 +8,7 @@
  *----------------------------------------------------------------------------
  *
  * Copyright (C) 2009 ARM Limited. All rights reserved.
- * Copyright (C) 2013 Oliver Hahm <oliver.hahm@inria.fr> 
+ * Copyright (C) 2013 Oliver Hahm <oliver.hahm@inria.fr>
  *
  * ARM Limited (ARM) is supplying this software for use with Cortex-Mx
  * processor based microcontrollers.  This file can be freely distributed
@@ -94,7 +94,7 @@ extern void _estack;		/* init value for the stack pointer. defined in linker scr
 
 /* function prototypes ------------------------------------------------------*/
 void Reset_Handler(void) __attribute__((__interrupt__));
-extern void _CPUregTestPOST (void);
+extern void _CPUregTestPOST(void);
 
 /******************************************************************************
 *
@@ -105,65 +105,64 @@ extern void _CPUregTestPOST (void);
 ******************************************************************************/
 #define STACK_SIZE                              0x00000200
 
-__attribute__ ((section(".stackarea")))
+__attribute__((section(".stackarea")))
 /* static */ unsigned long pulStack[STACK_SIZE];
 
 
-__attribute__ ((section(".isr_vector")))
-void (* const g_pfnVectors[])(void) =
-{
-        /* &_estack,                   // The initial stack pointer */
-		(void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),  // The initial stack pointer
-        Reset_Handler,             /* Reset Handler */
-        NMI_Handler,               /* NMI Handler */
-        HardFault_Handler,         /* Hard Fault Handler */
-        MemManage_Handler,         /* MPU Fault Handler */
-        BusFault_Handler,          /* Bus Fault Handler */
-        UsageFault_Handler,        /* Usage Fault Handler */
-        0,                         /* Reserved */
-        0,                         /* Reserved */
-        0,                         /* Reserved */
-        0,                         /* Reserved */
-        SVC_Handler,               /* SVCall Handler */
-        DebugMon_Handler,          /* Debug Monitor Handler */
-        0,                         /* Reserved */
-        PendSV_Handler,            /* PendSV Handler */
-        SysTick_Handler,           /* SysTick Handler */
+__attribute__((section(".isr_vector")))
+void (* const g_pfnVectors[])(void) = {
+    /* &_estack,                   // The initial stack pointer */
+    (void ( *)(void))((unsigned long)pulStack + sizeof(pulStack)), // The initial stack pointer
+    Reset_Handler,             /* Reset Handler */
+    NMI_Handler,               /* NMI Handler */
+    HardFault_Handler,         /* Hard Fault Handler */
+    MemManage_Handler,         /* MPU Fault Handler */
+    BusFault_Handler,          /* Bus Fault Handler */
+    UsageFault_Handler,        /* Usage Fault Handler */
+    0,                         /* Reserved */
+    0,                         /* Reserved */
+    0,                         /* Reserved */
+    0,                         /* Reserved */
+    SVC_Handler,               /* SVCall Handler */
+    DebugMon_Handler,          /* Debug Monitor Handler */
+    0,                         /* Reserved */
+    PendSV_Handler,            /* PendSV Handler */
+    SysTick_Handler,           /* SysTick Handler */
 
-		// External Interrupts
-        WDT_IRQHandler,            /* Watchdog Timer */
-        TIMER0_IRQHandler,         /* Timer0 */
-        TIMER1_IRQHandler,         /* Timer1 */
-        TIMER2_IRQHandler,         /* Timer2 */
-        TIMER3_IRQHandler,         /* Timer3 */
-        UART0_IRQHandler,          /* UART0 */
-        UART1_IRQHandler,          /* UART1 */
-        UART2_IRQHandler,          /* UART2 */
-        UART3_IRQHandler,          /* UART3 */
-        PWM1_IRQHandler,           /* PWM1 */
-        I2C0_IRQHandler,           /* I2C0 */
-        I2C1_IRQHandler,           /* I2C1 */
-        I2C2_IRQHandler,           /* I2C2 */
-        SPI_IRQHandler,            /* SPI */
-        SSP0_IRQHandler,           /* SSP0 */
-        SSP1_IRQHandler,           /* SSP1 */
-        PLL0_IRQHandler,           /* PLL0 (Main PLL) */
-        RTC_IRQHandler,            /* Real Time Clock */
-        EINT0_IRQHandler,          /* External Interrupt 0 */
-        EINT1_IRQHandler,          /* External Interrupt 1 */
-        EINT2_IRQHandler,          /* External Interrupt 2 */
-        EINT3_IRQHandler,          /* External Interrupt 3 */
-        ADC_IRQHandler,            /* A/D Converter */
-        BOD_IRQHandler,            /* Brown Out Detect */
-        USB_IRQHandler,            /* USB */
-        CAN_IRQHandler,            /* CAN */
-        DMA_IRQHandler,            /* GP DMA */
-        I2S_IRQHandler,            /* I2S */
-        ENET_IRQHandler,           /* Ethernet */
-        RIT_IRQHandler,            /* Repetitive Interrupt Timer */
-        MCPWM_IRQHandler,          /* Motor Control PWM */
-        QEI_IRQHandler,            /* Quadrature Encoder Interface */
-        PLL1_IRQHandler,           /* PLL1 (USB PLL) */
+    // External Interrupts
+    WDT_IRQHandler,            /* Watchdog Timer */
+    TIMER0_IRQHandler,         /* Timer0 */
+    TIMER1_IRQHandler,         /* Timer1 */
+    TIMER2_IRQHandler,         /* Timer2 */
+    TIMER3_IRQHandler,         /* Timer3 */
+    UART0_IRQHandler,          /* UART0 */
+    UART1_IRQHandler,          /* UART1 */
+    UART2_IRQHandler,          /* UART2 */
+    UART3_IRQHandler,          /* UART3 */
+    PWM1_IRQHandler,           /* PWM1 */
+    I2C0_IRQHandler,           /* I2C0 */
+    I2C1_IRQHandler,           /* I2C1 */
+    I2C2_IRQHandler,           /* I2C2 */
+    SPI_IRQHandler,            /* SPI */
+    SSP0_IRQHandler,           /* SSP0 */
+    SSP1_IRQHandler,           /* SSP1 */
+    PLL0_IRQHandler,           /* PLL0 (Main PLL) */
+    RTC_IRQHandler,            /* Real Time Clock */
+    EINT0_IRQHandler,          /* External Interrupt 0 */
+    EINT1_IRQHandler,          /* External Interrupt 1 */
+    EINT2_IRQHandler,          /* External Interrupt 2 */
+    EINT3_IRQHandler,          /* External Interrupt 3 */
+    ADC_IRQHandler,            /* A/D Converter */
+    BOD_IRQHandler,            /* Brown Out Detect */
+    USB_IRQHandler,            /* USB */
+    CAN_IRQHandler,            /* CAN */
+    DMA_IRQHandler,            /* GP DMA */
+    I2S_IRQHandler,            /* I2S */
+    ENET_IRQHandler,           /* Ethernet */
+    RIT_IRQHandler,            /* Repetitive Interrupt Timer */
+    MCPWM_IRQHandler,          /* Motor Control PWM */
+    QEI_IRQHandler,            /* Quadrature Encoder Interface */
+    PLL1_IRQHandler,           /* PLL1 (USB PLL) */
 };
 
 /*******************************************************************************
@@ -183,22 +182,26 @@ void Reset_Handler(void)
      * This used for cleaning AHBRAM0 section
      */
 #if 0
+
     for (pulDest = ((unsigned long *)AHBRAM0_BASE); \
-					pulDest < ((unsigned long *)(AHBRAM0_BASE + AHBRAM0_SIZE)); \
-					pulDest++){
-    	*(pulDest++) = 0;
+         pulDest < ((unsigned long *)(AHBRAM0_BASE + AHBRAM0_SIZE)); \
+         pulDest++) {
+        *(pulDest++) = 0;
     }
+
 #endif
 
     /*
      * This used for cleaning AHBRAM1 section
      */
 #if 0
+
     for (pulDest = ((unsigned long *)AHBRAM1_BASE); \
-					pulDest < ((unsigned long *)(AHBRAM1_BASE + AHBRAM1_SIZE)); \
-					pulDest++){
-    	*(pulDest++) = 0;
+         pulDest < ((unsigned long *)(AHBRAM1_BASE + AHBRAM1_SIZE)); \
+         pulDest++) {
+        *(pulDest++) = 0;
     }
+
 #endif
 
     /*
@@ -206,18 +209,18 @@ void Reset_Handler(void)
      */
 #if (__RAM_MODE__==0)
     pulSrc = &__sidata;
-    for(pulDest = &__data_start__; pulDest < &__data_end__; )
-    {
+
+    for (pulDest = &__data_start__; pulDest < &__data_end__;) {
         *(pulDest++) = *(pulSrc++);
     }
+
 #endif
 
 
     /*
      * Zero fill the bss segment.
      */
-    for(pulDest = &__bss_start__; pulDest < &__bss_end__; )
-    {
+    for (pulDest = &__bss_start__; pulDest < &__bss_end__;) {
         *(pulDest++) = 0;
     }
 
@@ -290,8 +293,9 @@ void Reset_Handler(void)
  * for examination by a debugger.
  *
  ****************************************************************************/
-void default_handler(void) {
-	/* Go into an infinite loop. */
-	while (1) {
-	}
+void default_handler(void)
+{
+    /* Go into an infinite loop. */
+    while (1) {
+    }
 }

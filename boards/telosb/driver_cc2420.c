@@ -1,11 +1,11 @@
-  /*
-   * driver_cc2420.c - Implementation of the board dependent cc2420 functions.
-   * Copyright (C) 2005, 2006, 2007, 2008 by Thomas Hillebrandt and Heiko Will
-   * Copyright (C) 2013 Oliver Hahm <oliver.hahm@inria.fr>
-   *
-   * This source code is licensed under the GNU Lesser General Public License,
-   * Version 2.  See the file LICENSE for more details.
-   */
+/*
+ * driver_cc2420.c - Implementation of the board dependent cc2420 functions.
+ * Copyright (C) 2005, 2006, 2007, 2008 by Thomas Hillebrandt and Heiko Will
+ * Copyright (C) 2013 Oliver Hahm <oliver.hahm@inria.fr>
+ *
+ * This source code is licensed under the GNU Lesser General Public License,
+ * Version 2.  See the file LICENSE for more details.
+ */
 
 #include <stdio.h>
 
@@ -116,18 +116,22 @@ uint8_t cc2420_txrx(uint8_t data)
     IFG1 &= ~UTXIFG0;
     IFG1 &= ~URXIFG0;
     U0TXBUF = data;
-    while(!(IFG1 & UTXIFG0)) {
+
+    while (!(IFG1 & UTXIFG0)) {
         if (c++ == 1000000) {
             puts("cc2420_txrx alarm()");
         }
     }
+
     /* Wait for Byte received */
     c = 0;
-    while(!(IFG1 & URXIFG0)) {
+
+    while (!(IFG1 & URXIFG0)) {
         if (c++ == 1000000) {
             puts("cc2420_txrx alarm()");
         }
     }
+
     return U0RXBUF;
 }
 
@@ -137,7 +141,8 @@ void cc2420_spi_select(void)
     CC2420_CS_LOW;
 }
 
-void cc2420_spi_unselect(void) {
+void cc2420_spi_unselect(void)
+{
     CC2420_CS_HIGH;
 }
 
@@ -161,7 +166,8 @@ void cc2420_init_interrupts(void)
 void cc2420_spi_init(void)
 {
     /* Switch off async UART */
-    while(!(U0TCTL & TXEPT));   /* Wait for empty UxTXBUF register */
+    while (!(U0TCTL & TXEPT));  /* Wait for empty UxTXBUF register */
+
     IE1 &= ~(URXIE0 + UTXIE0);  /* Disable USART0 receive&transmit interrupt */
     ME1 &= ~(UTXE0 + URXE0);
 
@@ -171,7 +177,7 @@ void cc2420_spi_init(void)
     P3DIR     &= ~(0x04);                         /* P3.2 as input for SOMI */
     P4OUT     |=  0x04;                           /* P4.2 radio CS, hold high */
     P4DIR     |=  0x04;                           /* P4.2 radio CS, output */
- 
+
     /* Keep peripheral in reset state */
     U0CTL  = SWRST;
 
@@ -179,14 +185,14 @@ void cc2420_spi_init(void)
     /* CKPL works also, but not CKPH+CKPL or none of them!! */
     U0CTL |= CHAR + SYNC + MM;
     U0TCTL = CKPH + SSEL1 + SSEL0 + STC + TXEPT;;
-    
+
     /* Ignore clockrate argument for now, just use clock source/2 */
     /* SMCLK = 8 MHz */
     U0BR0 = 0x02;  /* Ensure baud rate >= 2 */
     U0BR1 = 0x00;
     U0MCTL = 0x00; /* No modulation */
     U0RCTL = 0x00; /* Reset Receive Control Register */
-   
+
     /* Enable SPI mode */
     ME1 |= USPIE0;
 
@@ -197,10 +203,11 @@ void cc2420_spi_init(void)
 /*
  * CC1100 receive interrupt
  */
-interrupt (PORT1_VECTOR) __attribute__ ((naked)) cc2420_isr(void)
+interrupt(PORT1_VECTOR) __attribute__((naked)) cc2420_isr(void)
 {
     __enter_isr();
-     /* Check IFG */
+
+    /* Check IFG */
     if ((P1IFG & CC2420_FIFOP_PIN) != 0) {
         P1IFG &= ~CC2420_FIFOP_PIN;
         cc2420_rx_irq();
@@ -209,6 +216,7 @@ interrupt (PORT1_VECTOR) __attribute__ ((naked)) cc2420_isr(void)
     /* GIO0 is falling => check if FIFOP is high, indicating an RXFIFO overflow */
     else if ((P1IFG & CC2420_GIO0) != 0) {
         P1IFG &= ~CC2420_GIO0_PIN;
+
         if (cc2420_get_fifop()) {
             cc2420_rxoverflow_irq();
             DEBUG("[CC2420] rxfifo overflow");
@@ -218,5 +226,6 @@ interrupt (PORT1_VECTOR) __attribute__ ((naked)) cc2420_isr(void)
         puts("cc2420_isr(): unexpected IFG!");
         /* Should not occur - only GDO1 and GIO1 interrupts are enabled */
     }
+
     __exit_isr();
 }

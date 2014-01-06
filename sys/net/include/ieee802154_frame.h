@@ -40,7 +40,8 @@
 
 #define IEEE_802154_PAN_ID              0x1234
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     uint8_t frame_type;
     uint8_t sec_enb;
     uint8_t frame_pend;
@@ -49,9 +50,11 @@ typedef struct __attribute__((packed)) {
     uint8_t dest_addr_m;
     uint8_t frame_ver;
     uint8_t src_addr_m;
-} ieee802154_frame_fcf_frame_t;
+}
+ieee802154_frame_fcf_frame_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     ieee802154_frame_fcf_frame_t fcf;
     uint8_t seq_nr;
     uint16_t dest_pan_id;
@@ -60,7 +63,8 @@ typedef struct __attribute__((packed)) {
     uint8_t src_addr[8];
     uint8_t *payload;
     uint8_t payload_len;
-} ieee802154_frame_t;
+}
+ieee802154_frame_t;
 
 uint8_t ieee802154_frame_init(ieee802154_frame_t *frame, uint8_t *buf);
 uint8_t ieee802154_frame_get_hdr_len(ieee802154_frame_t *frame);

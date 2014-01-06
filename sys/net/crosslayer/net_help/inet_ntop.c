@@ -102,9 +102,9 @@ static const char *inet_ntop6(const unsigned char *src, char *dst, size_t size)
     i = 0;
 
     do {
-        unsigned int next_word = (unsigned int) *next_src++;
+        unsigned int next_word = (unsigned int) * next_src++;
         next_word <<= 8;
-        next_word |= (unsigned int) *next_src++;
+        next_word |= (unsigned int) * next_src++;
         *next_dest++ = next_word;
 
         if (next_word == 0) {
@@ -145,7 +145,7 @@ static const char *inet_ntop6(const unsigned char *src, char *dst, size_t size)
      */
     tp = tmp;
 
-    for (i = 0; i < ((int) (IN6ADDRSZ / INT16SZ));) {
+    for (i = 0; i < ((int)(IN6ADDRSZ / INT16SZ));) {
         /* Are we inside the best run of 0x00's? */
         if (i == best.base) {
             *tp++ = ':';
@@ -160,7 +160,7 @@ static const char *inet_ntop6(const unsigned char *src, char *dst, size_t size)
 
         /* Is this address an encapsulated IPv4? */
         if (i == 6 && best.base == 0 &&
-           (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
+            (best.len == 6 || (best.len == 5 && words[5] == 0xffff))) {
             if (!inet_ntop4(src + 12, tp, sizeof tmp - (tp - tmp))) {
                 return (NULL);
             }
@@ -201,7 +201,7 @@ static const char *inet_ntop6(const unsigned char *src, char *dst, size_t size)
  */
 const char *inet_ntop(int af, const void *src, char *dst, size_t size)
 {
-    switch(af) {
+    switch (af) {
         case AF_INET:
             return (inet_ntop4(src, dst, size));
 

@@ -94,10 +94,12 @@ int32_t srf08_get_distances(uint32_t *range_array, uint8_t ranging_mode)
     tx_buff[0] = ranging_mode;
     status = i2c_write(SRF08_I2C_INTERFACE, SRF08_DEFAULT_ADDR,
                        SRF08_COMMAND_REG, tx_buff, reg_size);
+
     if (!status) {
         puts("Write the ranging command to the i2c-interface is failed");
         return -1;
     }
+
     hwtimer_wait(HWTIMER_TICKS(70000));
 
     // Read all echo buffers
@@ -106,19 +108,24 @@ int32_t srf08_get_distances(uint32_t *range_array, uint8_t ranging_mode)
         //read the high echo byte
         status = i2c_read(SRF08_I2C_INTERFACE, SRF08_DEFAULT_ADDR,
                           register_location, rx_buff, reg_size);
+
         if (!status) {
             puts("Read the high echo byte from the i2c-interface is failed");
             return -1;
         }
+
         range_high_byte = rx_buff[0];
         //read the low echo byte
         status = i2c_read(SRF08_I2C_INTERFACE, SRF08_DEFAULT_ADDR,
                           register_location + 1, rx_buff, reg_size);
+
         if (!status) {
             puts("Read the low echo byte from the i2c-interface is failed");
             return -1;
         }
+
         range_low_byte = rx_buff[0];
+
         if ((range_high_byte == 0) && (range_low_byte == 0)) {
             break;
         }
@@ -129,8 +136,10 @@ int32_t srf08_get_distances(uint32_t *range_array, uint8_t ranging_mode)
             printf("distance = %4lu cm , echo%d\n",
                    distance, register_location / 2);
         }
+
         hwtimer_wait(HWTIMER_TICKS(500000));
     }
+
     puts("--------------------------------------------");
     return echo_number;
 }
@@ -150,6 +159,7 @@ void srf08_start_ranging(uint8_t ranging_mode)
     while (1) {
         puts("--------------------------------------------");
         echo_number = srf08_get_distances(range_array, ranging_mode);
+
         if (echo_number > 0) {
             for (i = 0; i < echo_number; i++) {
                 printf("stored distance = %4lu cm , echo%d\n", range_array[i], i + 1);

@@ -56,7 +56,7 @@
 
 #define PACKET_LENGTH				(0x3E)		///< Packet length = 62 Bytes.
 #define CC1100_SYNC_WORD_TX_TIME   (90000)		/* loop count (max. timeout ~ 15 ms) to wait for */
-												/* sync word to be transmitted (GDO2 from low to high) */
+/* sync word to be transmitted (GDO2 from low to high) */
 
 /**
  * @name	Virtual Radio Device methods (see vdevice_radio_methods)
@@ -73,33 +73,33 @@ static void switch_to_wor(void);
 
 static uint8_t pa_table_index = PATABLE;	///< Current PATABLE Index
 static uint8_t pa_table[] = {				///< PATABLE with available output powers
-				   0x00,					///< -52 dBm
-				   0x03,					///< -30 dBm
-				   0x0D,					///< -20 dBm
-				   0x1C,					///< -15 dBm
-				   0x34,					///< -10 dBm
-				   0x57,					///< - 5 dBm
-				   0x3F,					///< - 1 dBm
-				   0x8E,					///<   0 dBm
-				   0x85,					///< + 5 dBm
-				   0xCC,					///< + 7 dBm
-				   0xC6, 					///< + 9 dBm
-				   0xC3  					///< +10 dBm
+    0x00,					///< -52 dBm
+    0x03,					///< -30 dBm
+    0x0D,					///< -20 dBm
+    0x1C,					///< -15 dBm
+    0x34,					///< -10 dBm
+    0x57,					///< - 5 dBm
+    0x3F,					///< - 1 dBm
+    0x8E,					///<   0 dBm
+    0x85,					///< + 5 dBm
+    0xCC,					///< + 7 dBm
+    0xC6, 					///< + 9 dBm
+    0xC3  					///< +10 dBm
 }; /* If PATABLE is changed in size, adjust MAX_OUTPUT_POWER definition in CC1100 interface!*/
 
 static int8_t pa_table_dBm[] = {			///< Values of the PATABLE in dBm
-				   -52,
-				   -30,
-				   -20,
-				   -15,
-				   -10,
-				    -5,
-				    -1,
-				     0,
-				     5,
-				     7,
-				     9,
-				    10
+    -52,
+    -30,
+    -20,
+    -15,
+    -10,
+    -5,
+    -1,
+    0,
+    5,
+    7,
+    9,
+    10
 };
 
 /*---------------------------------------------------------------------------*/
@@ -423,7 +423,7 @@ static bool cc1100_set_mode0(uint8_t mode, uint16_t opt_mode_data)
 {
     int result;
 
-    switch(mode) {
+    switch (mode) {
         case CC1100_MODE_WOR:
             /* Calculate WOR settings, store result (new burst count) */
             result = cc1100_phy_calc_wor_settings(opt_mode_data);
@@ -486,7 +486,7 @@ bool cc1100_set_mode(uint8_t mode, uint16_t opt_mode_data)
 
 char *cc1100_mode_to_text(uint8_t mode)
 {
-    switch(mode) {
+    switch (mode) {
         case CC1100_MODE_WOR:
             return "Wake-On-Radio";
 
@@ -500,7 +500,7 @@ char *cc1100_mode_to_text(uint8_t mode)
 
 char *cc1100_state_to_text(uint8_t state)
 {
-    switch(state) {
+    switch (state) {
         case RADIO_UNKNOWN:
             return "Unknown";
 
@@ -732,7 +732,7 @@ char *cc1100_get_marc_state(void)
         cc1100_go_receive();
     }
 
-    switch(state) {
+    switch (state) {
             /* Note: it is not possible to read back the SLEEP or XOFF state numbers */
             /* because setting CSn low will make the chip enter the IDLE mode from the */
             /* SLEEP (0) or XOFF (2) states. */
@@ -889,7 +889,7 @@ rd_set_mode(int mode)
         result = RADIO_MODE_ON;
     }
 
-    switch(mode) {
+    switch (mode) {
         case RADIO_MODE_ON:
             cc110x_init_interrupts();			/* Enable interrupts */
             cc1100_setup_mode();				/* Set chip to desired mode */

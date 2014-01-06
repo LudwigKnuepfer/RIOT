@@ -8,7 +8,7 @@
 /**
  * @ingroup     sys_crypto
  * @{
- * 
+ *
  * @file        cbcmode.h
  * @brief       Headers of the implementation of the CBC Mode of Operation
  *
@@ -73,7 +73,7 @@ enum {
  * @param   spill1  test1
  */
 typedef struct CBCModeContext {
-        // Spill-Block 1 for temporary usage
+    // Spill-Block 1 for temporary usage
     uint8_t spill1 [CBCMODE_MAX_BLOCK_SIZE ];
     // Spill-Block 2 for temporary usage
     uint8_t spill2 [CBCMODE_MAX_BLOCK_SIZE ];

@@ -171,7 +171,7 @@ int _write_r(struct _reent *r, int fd, const void *data, unsigned int count)
     int result = EOF;
     r->_errno = EBADF;
 
-    switch(fd) {
+    switch (fd) {
         case STDOUT_FILENO:
         case STDERR_FILENO:
 #if FEUERWARE_CONF_ENABLE_HAL

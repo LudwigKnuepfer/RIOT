@@ -89,7 +89,7 @@ typedef struct {
 typedef struct CipherModeContext {
     cipher_context_t cc;            // CipherContext for the cipher-operations
     uint8_t context[24];         // context for the block-cipher-modes'
-                                 // internal functions
+    // internal functions
     //CBCModeContext* context;
 } CipherModeContext;
 
@@ -100,14 +100,14 @@ typedef struct CipherModeContext {
  * @typedef     BlockCipher_Archive_t
  */
 typedef struct {
-        // the number of available ciphers
+    // the number of available ciphers
     uint8_t NoCiphers;
     // the ciphers in form or BlockCipherInterface_ts
     block_cipher_interface_t ciphers[PARSEC_MAX_BLOCK_CIPHERS];
 } block_cipher_archive_t;
 
 typedef struct {
-        // cipher_context_t for the cipher-operations
+    // cipher_context_t for the cipher-operations
     cipher_context_t cc;
 #if defined(AES) || defined (TWOFISH)
     // supports 16-Byte blocksize

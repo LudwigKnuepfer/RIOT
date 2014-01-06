@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008 Freie Universität Berlin
- * Copyright (C) 2013 INRIA 
+ * Copyright (C) 2013 INRIA
  *
  * This file is subject to the terms and conditions of the GNU Lesser General
  * Public License. See the file LICENSE in the top level directory for more
@@ -26,7 +26,7 @@
 
 #define FIXED_PKTLEN        (0x00)      ///< Fixed length packets, length configured in PKTLEN register.
 #define VARIABLE_PKTLEN     (0x01)      ///< Variable length packets, packet length configured by the first
-                                        ///< byte after synch word.
+///< byte after synch word.
 
 /**
  * @name    Bitmasks for reading out status register values

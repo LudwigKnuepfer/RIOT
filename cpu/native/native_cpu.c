@@ -74,7 +74,7 @@ char *thread_stack_init(void (*task_func)(void), void *stack_start, int stacksiz
     ucontext_t *p;
 
     VALGRIND_STACK_REGISTER(stack_start, stack_start + stacksize);
-    VALGRIND_DEBUG("VALGRIND_STACK_REGISTER(%p, %p)\n", stack_start, (void*)((int)stack_start + stacksize));
+    VALGRIND_DEBUG("VALGRIND_STACK_REGISTER(%p, %p)\n", stack_start, (void *)((int)stack_start + stacksize));
 
     DEBUG("thread_stack_init()\n");
 
@@ -112,6 +112,7 @@ void isr_cpu_switch_context_exit(void)
     ucontext_t *ctx;
 
     DEBUG("XXX: cpu_switch_context_exit()\n");
+
     if ((sched_context_switch_request == 1) || (active_thread == NULL)) {
         sched_run();
     }
@@ -138,6 +139,7 @@ void cpu_switch_context_exit()
         native_isr_context.uc_stack.ss_size = SIGSTKSZ;
         native_isr_context.uc_stack.ss_flags = 0;
         makecontext(&native_isr_context, isr_cpu_switch_context_exit, 0);
+
         if (setcontext(&native_isr_context) == -1) {
             err(EXIT_FAILURE, "cpu_switch_context_exit: swapcontext");
         }
@@ -145,6 +147,7 @@ void cpu_switch_context_exit()
     else {
         isr_cpu_switch_context_exit();
     }
+
     errx(EXIT_FAILURE, "this should have never been reached!!");
 }
 
@@ -158,6 +161,7 @@ void isr_thread_yield()
 
     native_interrupts_enabled = 1;
     _native_in_isr = 0;
+
     if (setcontext(ctx) == -1) {
         err(EXIT_FAILURE, "isr_thread_yield(): setcontext()");
     }
@@ -166,6 +170,7 @@ void isr_thread_yield()
 void thread_yield()
 {
     ucontext_t *ctx = (ucontext_t *)(active_thread->sp);
+
     if (_native_in_isr == 0) {
         _native_in_isr = 1;
         dINT();
@@ -173,9 +178,11 @@ void thread_yield()
         native_isr_context.uc_stack.ss_size = SIGSTKSZ;
         native_isr_context.uc_stack.ss_flags = 0;
         makecontext(&native_isr_context, isr_thread_yield, 0);
+
         if (swapcontext(ctx, &native_isr_context) == -1) {
             err(EXIT_FAILURE, "thread_yield: swapcontext");
         }
+
         eINT();
     }
     else {
@@ -194,7 +201,7 @@ void native_cpu_init()
     end_context.uc_stack.ss_flags = 0;
     makecontext(&end_context, sched_task_exit, 0);
     VALGRIND_STACK_REGISTER(__end_stack, __end_stack + sizeof(__end_stack));
-    VALGRIND_DEBUG("VALGRIND_STACK_REGISTER(%p, %p)\n", __end_stack, (void*)((int)__end_stack + sizeof(__end_stack)));
+    VALGRIND_DEBUG("VALGRIND_STACK_REGISTER(%p, %p)\n", __end_stack, (void *)((int)__end_stack + sizeof(__end_stack)));
 
     DEBUG("RIOT native cpu initialized.");
 }

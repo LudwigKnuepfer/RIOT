@@ -222,6 +222,7 @@ void rpl_delete_worst_parent(void)
 void rpl_delete_all_parents(void)
 {
     rpl_dodag_t *my_dodag = rpl_get_my_dodag();
+
     if (my_dodag != NULL) {
         my_dodag->my_preferred_parent = NULL;
     }
@@ -292,6 +293,7 @@ void rpl_parent_update(rpl_parent_t *parent)
         DEBUG("Not part of a dodag - this should not happen");
         return;
     }
+
     /* update Parent lifetime */
     if (parent != NULL) {
         parent->lifetime = my_dodag->default_lifetime * my_dodag->lifetime_unit;
