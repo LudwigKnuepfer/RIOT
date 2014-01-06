@@ -87,7 +87,7 @@ bool install_irq(int IntNumber, void (*HandlerAddr)(void), int Priority)
         *vect_addr = (int)HandlerAddr;	/* set interrupt vector */
         *vect_cntl = Priority;
         VICIntEnable = 1 << IntNumber;	/* Enable Interrupt */
-        return(true);
+        return (true);
     }
 }
 

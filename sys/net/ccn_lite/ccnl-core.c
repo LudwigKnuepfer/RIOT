@@ -393,6 +393,7 @@ ccnl_get_face_or_create(struct ccnl_relay_s *ccnl, int ifndx, uint16_t sender_id
     }
 
     f = (struct ccnl_face_s *) ccnl_calloc(1, sizeof(struct ccnl_face_s));
+
     if (!f) {
         return NULL;
     }
@@ -789,6 +790,7 @@ void ccnl_interest_propagate(struct ccnl_relay_s *ccnl,
     // transmit an Interest Message on all listed dest faces in sequence."
     // CCNL strategy: we forward on all FWD entries with a prefix match
     int forward_cnt = 0;
+
     for (fwd = ccnl->fib; fwd; fwd = fwd->next) {
         int rc = ccnl_prefix_cmp(fwd->prefix, NULL, i->prefix, CMP_LONGEST);
         DEBUGMSG(40, "  ccnl_interest_propagate, rc=%d/%d\n", rc,
@@ -938,6 +940,7 @@ ccnl_content_add2cache(struct ccnl_relay_s *ccnl, struct ccnl_content_s *c)
 
         for (c2 = ccnl->contents; c2; c2 = c2->next) {
             DEBUGMSG(1, "    '%s' -> %ld:%ld\n", ccnl_prefix_to_path(c2->name), c2->last_used.tv_sec, c2->last_used.tv_usec);
+
             if (!(c2->flags & CCNL_CONTENT_FLAGS_STATIC)
                 && ((!oldest) || timevaldelta(&c2->last_used, &oldest->last_used) < 0)) {
                 oldest = c2;
@@ -947,7 +950,8 @@ ccnl_content_add2cache(struct ccnl_relay_s *ccnl, struct ccnl_content_s *c)
         if (oldest) {
             DEBUGMSG(1, "   replaced: '%s'\n", ccnl_prefix_to_path(oldest->name));
             ccnl_content_remove(ccnl, oldest);
-        } else {
+        }
+        else {
             DEBUGMSG(1, "   no dynamic content to remove...\n");
             break;
         }
@@ -1023,6 +1027,7 @@ struct ccnl_forward_s *ccn_forward_find_common_prefix_to_aggregate(struct ccnl_r
 
     /* fib as at least one enty */
     struct ccnl_forward_s *fwd2 = ccnl->fib;
+
     while (fwd2) {
         DEBUGMSG(1, "ccn_forward_find_common_prefix: '%s' vs. '%s'\n", ccnl_prefix_to_path(p), ccnl_prefix_to_path(fwd2->prefix));
         *match_len = ccnl_prefix_cmp(fwd2->prefix, 0, p, CMP_LONGEST);
@@ -1055,6 +1060,7 @@ void ccnl_content_learn_name_route(struct ccnl_relay_s *ccnl, struct ccnl_prefix
      */
     int match_len;
     struct ccnl_forward_s *fwd = ccn_forward_find_common_prefix_to_aggregate(ccnl, p, &match_len);
+
     if (!fwd) {
         /* there was no prefix match with the user defined creteria. */
 
@@ -1062,7 +1068,8 @@ void ccnl_content_learn_name_route(struct ccnl_relay_s *ccnl, struct ccnl_prefix
         fwd = ccnl_forward_new(p, f, threshold_prefix, flags);
         DBL_LINKED_LIST_ADD(ccnl->fib, fwd);
         DEBUGMSG(999, "ccnl_content_learn_name_route: new route '%s' on face %d learned\n", ccnl_prefix_to_path(fwd->prefix), f->faceid);
-    } else {
+    }
+    else {
         /* there was a prefix match with the user defined creteria. */
 
         /* if the new entry has shorter prefix */
@@ -1074,7 +1081,8 @@ void ccnl_content_learn_name_route(struct ccnl_relay_s *ccnl, struct ccnl_prefix
             fwd = ccnl_forward_new(p, f, (p->compcnt - match_len), flags);
             DBL_LINKED_LIST_ADD(ccnl->fib, fwd);
             DEBUGMSG(999, "ccnl_content_learn_name_route: route '%s' on face %d replaced\n", ccnl_prefix_to_path(fwd->prefix), f->faceid);
-        } else {
+        }
+        else {
             /* we don't need to do an update, because we know a shorter prefix already */
         }
     }
@@ -1098,6 +1106,7 @@ ccnl_forward_remove(struct ccnl_relay_s *ccnl, struct ccnl_forward_s *fwd)
             p->forwarded_over = NULL;
         }
     }
+
     DEBUGMSG(40, "  ccnl_forward_remove next=%p\n", (void *) fwd2);
 
     free_forward(fwd);
@@ -1119,7 +1128,7 @@ void ccnl_do_retransmit(void *ptr, void *dummy)
     for (struct ccnl_interest_s *i = relay->pit; i; i = i->next) {
         // CONFORM: "Entries in the PIT MUST timeout rather
         // than being held indefinitely."
-        if(i->retries <= CCNL_MAX_INTEREST_RETRANSMIT) {
+        if (i->retries <= CCNL_MAX_INTEREST_RETRANSMIT) {
             // CONFORM: "A node MUST retransmit Interest Messages
             // periodically for pending PIT entries."
             DEBUGMSG(7, " retransmit %d <%s>\n", i->retries,
@@ -1154,14 +1163,16 @@ void ccnl_do_ageing(void *ptr, void *dummy)
 
     while (i) {
         if (ccnl_is_timeouted(&now, &i->last_used, CCNL_INTEREST_TIMEOUT_SEC,
-                CCNL_INTEREST_TIMEOUT_USEC)) {
+                              CCNL_INTEREST_TIMEOUT_USEC)) {
             if (i->from->ifndx == RIOT_MSG_IDX) {
                 /* this interest was requested by an app from this node */
                 /* inform this app about this problem */
                 riot_send_nack(i->from->faceid);
             }
+
             i = ccnl_interest_remove(relay, i);
-        } else {
+        }
+        else {
             i = i->next;
         }
     }
@@ -1187,11 +1198,13 @@ void ccnl_do_ageing(void *ptr, void *dummy)
     }
 
     struct ccnl_forward_s *fwd = relay->fib;
+
     while (fwd) {
         if (!(fwd->flags & CCNL_FORWARD_FLAGS_STATIC)
             && ccnl_is_timeouted(&now, &fwd->last_used, CCNL_FWD_TIMEOUT_SEC, CCNL_FWD_TIMEOUT_USEC)) {
             fwd = ccnl_forward_remove(relay, fwd);
-        } else {
+        }
+        else {
             fwd = fwd->next;
         }
     }
@@ -1338,7 +1351,8 @@ int ccnl_core_RX_i_or_c(struct ccnl_relay_s *relay, struct ccnl_face_s *from,
                 DEBUGMSG(7, "  removed because no matching interest\n");
                 free_content(c);
                 goto Skip;
-            } else {
+            }
+            else {
 #if CCNL_DYNAMIC_FIB
                 /* content has matched an interest, we considder this name as availeble on this face */
                 ccnl_content_learn_name_route(relay, c->name, from, relay->fib_threshold_prefix, 0);

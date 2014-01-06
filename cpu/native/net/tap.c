@@ -69,9 +69,11 @@ void _native_handle_tap_input(void)
 
     nread = real_read(_native_tap_fd, &frame, sizeof(union eth_frame));
     DEBUG("_native_handle_tap_input - read %d bytes\n", nread);
+
     if (nread > 0) {
         if (ntohs(frame.field.header.ether_type) == NATIVE_ETH_PROTO) {
             nread = nread - ETHER_HDR_LEN;
+
             if ((nread - 1) <= 0) {
                 DEBUG("_native_handle_tap_input: no payload");
             }
@@ -82,8 +84,8 @@ void _native_handle_tap_input(void)
                 p.dst = ntohs(frame.field.payload.nn_header.dst);
                 p.rssi = 0;
                 p.lqi = 0;
-                p.toa.seconds = HWTIMER_TICKS_TO_US(t)/1000000;
-                p.toa.microseconds = HWTIMER_TICKS_TO_US(t)%1000000;
+                p.toa.seconds = HWTIMER_TICKS_TO_US(t) / 1000000;
+                p.toa.microseconds = HWTIMER_TICKS_TO_US(t) % 1000000;
                 /* XXX: check overflow */
                 p.length = ntohs(frame.field.payload.nn_header.length);
                 p.data = frame.field.payload.data;
@@ -103,10 +105,11 @@ void _native_handle_tap_input(void)
         FD_SET(_native_tap_fd, &rfds);
 
         _native_in_syscall++; // no switching here
-        if (select(_native_tap_fd +1, &rfds, NULL, NULL, &t) == 1) {
+
+        if (select(_native_tap_fd + 1, &rfds, NULL, NULL, &t) == 1) {
             int sig = SIGIO;
             extern int _sig_pipefd[2];
-            extern ssize_t (*real_write)(int fd, const void *buf, size_t count);
+            extern ssize_t (*real_write)(int fd, const void * buf, size_t count);
             real_write(_sig_pipefd[1], &sig, sizeof(int));
             _native_sigpend++;
             DEBUG("_native_handle_tap_input: sigpend++\n");
@@ -114,10 +117,11 @@ void _native_handle_tap_input(void)
         else {
             DEBUG("_native_handle_tap_input: no more pending tap data\n");
         }
+
         _native_in_syscall--;
     }
     else if (nread == -1) {
-        if ((errno == EAGAIN ) || (errno == EWOULDBLOCK)) {
+        if ((errno == EAGAIN) || (errno == EWOULDBLOCK)) {
             //warn("read");
         }
         else {
@@ -135,7 +139,7 @@ int _native_marshall_ethernet(uint8_t *framebuf, radio_packet_t *packet)
     union eth_frame *f;
     unsigned char addr[ETHER_ADDR_LEN];
 
-    f = (union eth_frame*)framebuf;
+    f = (union eth_frame *)framebuf;
     addr[0] = addr[1] = addr[2] = addr[3] = addr[4] = addr[5] = 0xFF;
 
     memcpy(f->field.header.ether_dhost, addr, ETHER_ADDR_LEN);
@@ -174,10 +178,12 @@ int8_t send_buf(radio_packet_t *packet)
 
     DEBUG("send_buf: trying to send %d bytes\n", to_send);
 
-    if ((nsent = write(_native_tap_fd, buf, to_send)) == -1) {;
+    if ((nsent = write(_native_tap_fd, buf, to_send)) == -1) {
+        ;
         warn("write");
         return -1;
     }
+
     return (nsent > INT8_MAX ? INT8_MAX : nsent);
 }
 
@@ -186,7 +192,7 @@ int tap_init(char *name)
 
 #ifdef __MACH__ /* OSX */
     char clonedev[255] = "/dev/"; /* XXX bad size */
-    strncpy(clonedev+5, name, 250);
+    strncpy(clonedev + 5, name, 250);
 #else /* Linux */
     struct ifreq ifr;
     char *clonedev = "/dev/net/tun";
@@ -198,11 +204,12 @@ int tap_init(char *name)
     }
 
 #ifdef __MACH__ /* OSX */
-    struct ifaddrs* iflist;
+    struct ifaddrs *iflist;
+
     if (getifaddrs(&iflist) == 0) {
         for (struct ifaddrs *cur = iflist; cur; cur = cur->ifa_next) {
             if ((cur->ifa_addr->sa_family == AF_LINK) && (strcmp(cur->ifa_name, name) == 0) && cur->ifa_addr) {
-                struct sockaddr_dl* sdl = (struct sockaddr_dl*)cur->ifa_addr;
+                struct sockaddr_dl *sdl = (struct sockaddr_dl *)cur->ifa_addr;
                 memcpy(_native_tap_mac, LLADDR(sdl), sdl->sdl_alen);
                 break;
             }
@@ -210,6 +217,7 @@ int tap_init(char *name)
 
         freeifaddrs(iflist);
     }
+
 #else /* Linux */
     memset(&ifr, 0, sizeof(ifr));
     ifr.ifr_flags = IFF_TAP | IFF_NO_PI;
@@ -217,9 +225,11 @@ int tap_init(char *name)
 
     if (ioctl(_native_tap_fd, TUNSETIFF, (void *)&ifr) == -1) {
         warn("ioctl");
+
         if (close(_native_tap_fd) == -1) {
             warn("close");
         }
+
         exit(EXIT_FAILURE);
     }
 
@@ -228,15 +238,19 @@ int tap_init(char *name)
 
 
     /* get MAC address */
-    memset (&ifr, 0, sizeof (ifr));
-    snprintf (ifr.ifr_name, sizeof (ifr.ifr_name), "%s", name);
+    memset(&ifr, 0, sizeof(ifr));
+    snprintf(ifr.ifr_name, sizeof(ifr.ifr_name), "%s", name);
+
     if (ioctl(_native_tap_fd, SIOCGIFHWADDR, &ifr) == -1) {
         warn("ioctl");
+
         if (close(_native_tap_fd) == -1) {
             warn("close");
         }
+
         exit(EXIT_FAILURE);
     }
+
     memcpy(_native_tap_mac, ifr.ifr_hwaddr.sa_data, ETHER_ADDR_LEN);
 #endif
 
@@ -244,15 +258,17 @@ int tap_init(char *name)
     register_interrupt(SIGIO, _native_handle_tap_input);
 
 #ifndef __MACH__ /* tuntap signalled IO not working in OSX */
+
     /* configure fds to send signals on io */
     if (fcntl(_native_tap_fd, F_SETOWN, getpid()) == -1) {
         err(EXIT_FAILURE, "tap_init(): fcntl(F_SETOWN)");
     }
 
     /* set file access mode to nonblocking */
-    if (fcntl(_native_tap_fd, F_SETFL, O_NONBLOCK|O_ASYNC) == -1) {
+    if (fcntl(_native_tap_fd, F_SETFL, O_NONBLOCK | O_ASYNC) == -1) {
         err(EXIT_FAILURE, "tap_init(): fcntl(F_SETFL)");
     }
+
 #endif /* OSX */
 
     DEBUG("RIOT native tap initialized.\n");

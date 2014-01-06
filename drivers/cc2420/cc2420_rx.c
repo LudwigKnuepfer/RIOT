@@ -29,8 +29,8 @@ void cc2420_rx_handler(void)
     cc2420_read_fifo(&cc2420_rx_buffer[rx_buffer_next].length, 1);
 
     /* read packet without rssi, crc and lqi */
-    uint8_t buf[cc2420_rx_buffer[rx_buffer_next].length-2];
-    cc2420_read_fifo(buf, cc2420_rx_buffer[rx_buffer_next].length-2);
+    uint8_t buf[cc2420_rx_buffer[rx_buffer_next].length - 2];
+    cc2420_read_fifo(buf, cc2420_rx_buffer[rx_buffer_next].length - 2);
 
     cc2420_swap_fcf_bytes(buf);
     /* read rssi, lqi and crc */
@@ -41,25 +41,29 @@ void cc2420_rx_handler(void)
     cc2420_rx_buffer[rx_buffer_next].lqi = (uint8_t)(rssi_crc_lqi[1] & 0x7F);
     cc2420_rx_buffer[rx_buffer_next].crc = (uint8_t)((rssi_crc_lqi[1] & 0x80) >> 7);
 
-    if(cc2420_rx_buffer[rx_buffer_next].crc == 0) {
+    if (cc2420_rx_buffer[rx_buffer_next].crc == 0) {
         DEBUG("Got packet with invalid crc.\n");
         return;
     }
+
     ieee802154_frame_read(buf,
                           &cc2420_rx_buffer[rx_buffer_next].frame,
-                          cc2420_rx_buffer[rx_buffer_next].length-2);
-    if(cc2420_rx_buffer[rx_buffer_next].frame.fcf.frame_type != 2) {
+                          cc2420_rx_buffer[rx_buffer_next].length - 2);
+
+    if (cc2420_rx_buffer[rx_buffer_next].frame.fcf.frame_type != 2) {
 #ifdef DEBUG
-    ieee802154_frame_print_fcf_frame(&cc2420_rx_buffer[rx_buffer_next].frame);
+        ieee802154_frame_print_fcf_frame(&cc2420_rx_buffer[rx_buffer_next].frame);
 #endif
-    /* notify transceiver thread if any */
-    if (transceiver_pid) {
-        msg_t m;
-        m.type = (uint16_t) RCV_PKT_CC2420;
-        m.content.value = rx_buffer_next;
-        msg_send_int(&m, transceiver_pid);
+
+        /* notify transceiver thread if any */
+        if (transceiver_pid) {
+            msg_t m;
+            m.type = (uint16_t) RCV_PKT_CC2420;
+            m.content.value = rx_buffer_next;
+            msg_send_int(&m, transceiver_pid);
+        }
     }
-    } else {
+    else {
 #ifdef DEBUG
         DEBUG("GOT ACK for SEQ %u\n", cc2420_rx_buffer[rx_buffer_next].frame.seq_nr);
         ieee802154_frame_print_fcf_frame(&cc2420_rx_buffer[rx_buffer_next].frame);

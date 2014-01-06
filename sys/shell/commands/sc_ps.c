@@ -10,7 +10,7 @@
  * @ingroup shell_commands
  * @{
  * @file    sc_ps.c
- * @brief   shows all thread information 
+ * @brief   shows all thread information
  * @author  Oliver Hahm <oliver.hahm@inria.fr>
  * @}
  */

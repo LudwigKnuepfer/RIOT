@@ -5,15 +5,15 @@
  * Public License. See the file LICENSE in the top level directory for more
  * details.
  */
- 
- /**
- * @addtogroup  core_util
- * @{
- *
- * @file        cib.h
- * @brief       Circular integer buffer interface
- *
- */
+
+/**
+* @addtogroup  core_util
+* @{
+*
+* @file        cib.h
+* @brief       Circular integer buffer interface
+*
+*/
 
 #ifndef __CIB_H
 #define __CIB_H

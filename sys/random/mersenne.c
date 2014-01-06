@@ -58,6 +58,7 @@ static uint16_t mti = MTI_UNINITIALIZED;
 void genrand_init(uint32_t s)
 {
     mt[0] = s;
+
     for (int i = 1; i < N; ++i) {
         mt[i] = 1812433253UL * (mt[i - 1] ^ (mt[i - 1] >> 30)) + i;
         /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
@@ -74,22 +75,27 @@ void genrand_init_by_array(uint32_t *init_key, int key_length)
     genrand_init(19650218UL);
     int i = 1;
     int j = 0;
+
     for (int k = N > key_length ? N : key_length; k; --k) {
         mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >> 30)) * 1664525UL))
                 + init_key[j] + j; /* non linear */
         ++i;
         ++j;
+
         if (i >= N) {
             mt[0] = mt[N - 1];
             i = 1;
         }
+
         if (j >= key_length) {
             j = 0;
         }
     }
+
     for (int k = N - 1; k; k--) {
         mt[i] = (mt[i] ^ ((mt[i - 1] ^ (mt[i - 1] >> 30)) * 1566083941UL)) - i; /* non linear */
         i++;
+
         if (i >= N) {
             mt[0] = mt[N - 1];
             i = 1;
@@ -110,6 +116,7 @@ static void generate_numbers(void)
     for (int k = 0; k < N; ++k) {
         uint32_t y = (mt[k] & UPPER_MASK) | (mt[(k + 1) % N] & LOWER_MASK);
         mt[k] = mt[(k + M) % N] ^ (y >> 1);
+
         if (y & 1) {
             mt[k] ^= MATRIX_A;
         }

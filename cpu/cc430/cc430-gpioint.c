@@ -85,7 +85,7 @@ bool gpioint_set(int port, uint32_t bitmask, int flags, fp_irqcb callback)
         }
     }
 
-    switch(port) {
+    switch (port) {
         case 1:
             /* set port to input */
             P1DIR &= ~bitmask;

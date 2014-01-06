@@ -46,7 +46,10 @@ void cpu_switch_context_exit(void)
  * To "fix" this, we put a return in section .fini9 to make main
  * behave like a regular function. This enables a common
  * thread_stack_init behavior. */
-__attribute__((section (".fini9"))) void __main_epilogue(void) { __asm__("ret"); }
+__attribute__((section(".fini9"))) void __main_epilogue(void)
+{
+    __asm__("ret");
+}
 
 //----------------------------------------------------------------------------
 // Processor specific routine - here for MSP

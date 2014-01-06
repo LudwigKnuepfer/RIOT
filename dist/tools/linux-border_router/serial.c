@@ -230,7 +230,7 @@ static void report_open_error(const char *filename, int err)
 
 int write_serial_port(const void *buf, int num)
 {
-    return(write(port_fd, buf, num));
+    return (write(port_fd, buf, num));
 }
 
 

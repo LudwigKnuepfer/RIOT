@@ -129,7 +129,7 @@ static volatile uint16_t last_seq_num = 0;
 
 #define EVENT0_MAX 			(60493)	///< Maximum RX polling interval in milliseconds
 #define WOR_RES_SWITCH		 (1891)	///< Switching point value in milliseconds between
-									///< WOR_RES = 0 and WOR_RES = 1
+///< WOR_RES = 0 and WOR_RES = 1
 #define DUTY_CYCLE_SIZE		    (7)	///< Length of duty cycle array
 
 cc1100_wor_config_t cc1100_wor_config;	///< CC1100 WOR configuration
@@ -279,7 +279,7 @@ void cc1100_print_config(void)
 
 inline uint16_t iround(double d)
 {
-    return (uint16_t) (d + 0.5);
+    return (uint16_t)(d + 0.5);
 }
 
 int cc1100_phy_calc_wor_settings(uint16_t millis)
@@ -288,14 +288,14 @@ int cc1100_phy_calc_wor_settings(uint16_t millis)
     double t_packet_interval = (double)((T_PACKET_INTERVAL) / 1000.0);
 
     /* Calculate minimal T_EVENT0:
-      
+
        (1) t_rx_time > t_packet_interval
        (2) t_rx_time = T_EVENT0 / 2 ^ (RX_TIME + 3 + WOR_RES)
        ------------------------------------------------------
        with RX_TIME = 0 && WOR_RES = 0 => event0_min > t_packet_interval * 8
-      
+
        t_packet_interval = 3.8 ms (@400kbit/s)
-      
+
        => event0_min = Math.ceil(3.8 * 8) + 10 */
     uint16_t event0_min = (uint16_t)(t_packet_interval * 8) + 1 + 10;
 

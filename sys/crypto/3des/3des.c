@@ -247,7 +247,7 @@ static const uint32_t SP8[64] = {
 
 
 int tripledes_init(cipher_context_t *context, uint8_t blockSize, uint8_t keySize,
-                  uint8_t *key)
+                   uint8_t *key)
 {
     uint8_t i;
 
@@ -275,10 +275,10 @@ int tripledes_init(cipher_context_t *context, uint8_t blockSize, uint8_t keySize
 }
 
 int tripledes_setup_key(cipher_context_t *context, uint8_t *key,
-                                uint8_t keysize) //To change !!!
+                        uint8_t keysize) //To change !!!
 {
     return tripledes_init(context, tripledes_get_preferred_block_size(),
-                         keysize, key);
+                          keysize, key);
 }
 
 int tripledes_encrypt(cipher_context_t *context, uint8_t *plain, uint8_t *crypt)

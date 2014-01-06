@@ -69,6 +69,7 @@ int ccnl_riot_client_get(unsigned int relay_pid, char *name, char *reply_buf)
         /* ######################################################################### */
 
         msg_receive(&rep);
+
         if (rep.type == CCNL_RIOT_NACK) {
             /* network stack was not able to fetch this chunk */
             return 0;
@@ -113,7 +114,7 @@ int ccnl_riot_client_get(unsigned int relay_pid, char *name, char *reply_buf)
 }
 
 int ccnl_riot_client_new_face(unsigned int relay_pid, char *type, char *faceid,
-                  unsigned char *reply_buf)
+                              unsigned char *reply_buf)
 {
     DEBUGMSG(1, "riot_new_face: mkNewFaceRquest\n");
     int len = mkNewFaceRequest(reply_buf, type, NULL, NULL, faceid, NULL);
@@ -142,7 +143,7 @@ int ccnl_riot_client_new_face(unsigned int relay_pid, char *type, char *faceid,
 }
 
 int ccnl_riot_client_register_prefix(unsigned int relay_pid, char *prefix, char *faceid,
-                         unsigned char *reply_buf)
+                                     unsigned char *reply_buf)
 {
     DEBUGMSG(1, "riot_register_prefix: mkPrefixregRequest\n");
     int len = mkPrefixregRequest(reply_buf, 1, prefix, faceid);

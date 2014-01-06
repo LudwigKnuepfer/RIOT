@@ -125,7 +125,7 @@ void *sbrk(int incr)
 {
     char *stack_pointer;
 
-    asmv("mov r1, %0" : "=r"(stack_pointer));
+asmv("mov r1, %0" : "=r"(stack_pointer));
     stack_pointer -= STACK_EXTRA;
 
     if (incr > (stack_pointer - cur_break)) {
@@ -149,8 +149,8 @@ splhigh_(void)
 {
     /* Clear the GIE (General Interrupt Enable) flag. */
     int sr;
-    asmv("mov r2, %0" : "=r"(sr));
-    asmv("bic %0, r2" : : "i"(GIE));
+asmv("mov r2, %0" : "=r"(sr));
+asmv("bic %0, r2" : : "i"(GIE));
     return sr & GIE;		/* Ignore other sr bits. */
 }
 /*---------------------------------------------------------------------------*/
@@ -161,7 +161,7 @@ void
 splx_(int sr)
 {
     /* If GIE was set, restore it. */
-    asmv("bis %0, r2" : : "r"(sr));
+asmv("bis %0, r2" : : "r"(sr));
 }
 /*---------------------------------------------------------------------------*/
 

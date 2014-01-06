@@ -22,20 +22,20 @@ See the file LICENSE in the top level directory for more details.
 
 void (*int_handler)(int);
 extern void timerA_init(void);
-uint16_t overflow_interrupt[ARCH_MAXTIMERS+1];
+uint16_t overflow_interrupt[ARCH_MAXTIMERS + 1];
 uint16_t timer_round;
 
 #ifdef CC430
-  /* CC430 have "TimerA0", "TimerA1" and so on... */
-  #define CNT_CTRL_BASE_REG  (TA0CCTL0)
-  #define CNT_COMP_BASE_REG  (TA0CCR0)
-  #define TIMER_VAL_REG      (TA0R)
+/* CC430 have "TimerA0", "TimerA1" and so on... */
+#define CNT_CTRL_BASE_REG  (TA0CCTL0)
+#define CNT_COMP_BASE_REG  (TA0CCR0)
+#define TIMER_VAL_REG      (TA0R)
 #else
-  /* ... while other MSP430 MCUs have "TimerA", "TimerB".
-     Cheers for TI and its consistency! */
-  #define CNT_CTRL_BASE_REG  (TACCTL0)
-  #define CNT_COMP_BASE_REG  (TACCR0)
-  #define TIMER_VAL_REG      (TAR)
+/* ... while other MSP430 MCUs have "TimerA", "TimerB".
+   Cheers for TI and its consistency! */
+#define CNT_CTRL_BASE_REG  (TACCTL0)
+#define CNT_COMP_BASE_REG  (TACCR0)
+#define TIMER_VAL_REG      (TAR)
 #endif
 
 static void timer_disable_interrupt(short timer)
@@ -74,7 +74,7 @@ void timer_unset(short timer)
 
 unsigned long hwtimer_arch_now()
 {
-    return ((uint32_t)timer_round << 16)+TIMER_VAL_REG;
+    return ((uint32_t)timer_round << 16) + TIMER_VAL_REG;
 }
 
 void hwtimer_arch_init(void (*handler)(int), uint32_t fcpu)
@@ -109,7 +109,7 @@ void hwtimer_arch_set_absolute(unsigned long value, short timer)
 {
     uint16_t small_value = value % 0xFFFF;
     overflow_interrupt[timer] = (uint16_t)(value >> 16);
-    timer_set(small_value,timer);
+    timer_set(small_value, timer);
 }
 
 void hwtimer_arch_unset(short timer)

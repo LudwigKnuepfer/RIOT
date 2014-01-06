@@ -35,7 +35,8 @@ void cc2420_init(int tpid)
 
     cc2420_strobe(CC2420_STROBE_XOSCON);               //enable crystal
 
-    while((cc2420_strobe(NOBYTE) & 0x40) == 0);        //wait for crystal to be stable
+    while ((cc2420_strobe(NOBYTE) & 0x40) == 0);       //wait for crystal to be stable
+
     hwtimer_wait(CC2420_WAIT_TIME);
 
     reg = cc2420_read_reg(CC2420_REG_MDMCTRL0);
@@ -70,7 +71,8 @@ void cc2420_init(int tpid)
 
 }
 
-void cc2420_switch_to_rx(void) {
+void cc2420_switch_to_rx(void)
+{
     cc2420_strobe(CC2420_STROBE_RFOFF);
     cc2420_strobe(CC2420_STROBE_FLUSHRX);
     cc2420_strobe(CC2420_STROBE_FLUSHRX);
@@ -93,22 +95,26 @@ void cc2420_set_monitor(uint8_t mode)
 {
     uint16_t reg;
     reg = cc2420_read_reg(CC2420_REG_MDMCTRL0);
-    if(mode) {
+
+    if (mode) {
         reg &= ~CC2420_ADR_DECODE;
-    } else {
+    }
+    else {
         reg |= CC2420_ADR_DECODE;
     }
+
     cc2420_write_reg(CC2420_REG_MDMCTRL0, reg);
 }
 
 int16_t cc2420_set_channel(uint16_t chan)
 {
-    if(chan < 11 || chan > 26) {
-        DEBUG("Invalid channel %i set. Valid channels are 11 through 26\n",chan);
+    if (chan < 11 || chan > 26) {
+        DEBUG("Invalid channel %i set. Valid channels are 11 through 26\n", chan);
         return -1;
     }
+
     radio_channel = chan;
-    chan = 357 + (5 * (radio_channel-11));              //calculation from p.50
+    chan = 357 + (5 * (radio_channel - 11));            //calculation from p.50
     cc2420_write_reg(CC2420_REG_FSCTRL, chan);
     return radio_channel;
 }

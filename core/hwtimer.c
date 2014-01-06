@@ -5,7 +5,7 @@
  * Public License. See the file LICENSE in the top level directory for more
  * details.
  */
- 
+
 /**
  * @ingroup     core_hwtimer
  * @{
@@ -38,7 +38,7 @@
 /*---------------------------------------------------------------------------*/
 
 typedef struct hwtimer_t {
-    void (*callback)(void*);
+    void (*callback)(void *);
     void *data;
 } hwtimer_t;
 
@@ -55,8 +55,9 @@ static void multiplexer(int source)
     timer[source].callback(timer[source].data);
 }
 
-static void hwtimer_releasemutex(void* mutex) {
-    mutex_unlock((mutex_t*) mutex);
+static void hwtimer_releasemutex(void *mutex)
+{
+    mutex_unlock((mutex_t *) mutex);
 }
 
 void hwtimer_spin(unsigned long ticks)
@@ -132,16 +133,18 @@ void hwtimer_wait(unsigned long ticks)
         hwtimer_spin(ticks);
         return;
     }
+
     mutex_init(&mutex);
     mutex_lock(&mutex);
     /* -2 is to adjust the real value */
     int res = hwtimer_set(ticks - 2, hwtimer_releasemutex, &mutex);
+
     if (res == -1) {
         mutex_unlock(&mutex);
         hwtimer_spin(ticks);
         return;
     }
-    
+
     /* try to lock mutex again will cause the thread to go into
      * STATUS_MUTEX_BLOCKED until hwtimer fires the releasemutex */
     mutex_lock(&mutex);
@@ -150,7 +153,7 @@ void hwtimer_wait(unsigned long ticks)
 /*---------------------------------------------------------------------------*/
 
 
-static int _hwtimer_set(unsigned long offset, void (*callback)(void*), void *ptr, bool absolute)
+static int _hwtimer_set(unsigned long offset, void (*callback)(void *), void *ptr, bool absolute)
 {
     DEBUG("_hwtimer_set: offset=%lu callback=%p ptr=%p absolute=%d\n", offset, callback, ptr, absolute);
 
@@ -190,12 +193,12 @@ static int _hwtimer_set(unsigned long offset, void (*callback)(void*), void *ptr
     return n;
 }
 
-int hwtimer_set(unsigned long offset, void (*callback)(void*), void *ptr)
+int hwtimer_set(unsigned long offset, void (*callback)(void *), void *ptr)
 {
     return _hwtimer_set(offset, callback, ptr, false);
 }
 
-int hwtimer_set_absolute(unsigned long offset, void (*callback)(void*), void *ptr)
+int hwtimer_set_absolute(unsigned long offset, void (*callback)(void *), void *ptr)
 {
     return _hwtimer_set(offset, callback, ptr, true);
 }

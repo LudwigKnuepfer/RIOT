@@ -62,6 +62,7 @@ int riot_send_msg(uint8_t *buf, uint16_t size, uint16_t to)
     DEBUGMSG(1, "size=%" PRIu16 " to=%" PRIu16 "\n", size, to);
 
     uint8_t *buf2 = malloc(sizeof(riot_ccnl_msg_t) + size);
+
     if (!buf2) {
         DEBUGMSG(1, "  malloc failed...dorpping msg!\n");
         return 0;

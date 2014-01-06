@@ -49,6 +49,7 @@ block_cipher_interface_t rc5_interface = {
 int rc5_init(cipher_context_t *context, uint8_t blockSize, uint8_t keySize, uint8_t *key)
 {
     (void)keySize;
+
     // 8 byte blocks only
     if (blockSize != BLOCK_SIZE) {
         return 0;

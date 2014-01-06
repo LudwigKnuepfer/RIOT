@@ -97,7 +97,7 @@ enum lpm_mode lpm_set(enum lpm_mode target)
     last_lpm = native_lpm;
     native_lpm = target;
 
-    switch(native_lpm) { /* @contiki :-p  */
+    switch (native_lpm) { /* @contiki :-p  */
         case LPM_ON:
             break;
 
@@ -108,7 +108,7 @@ enum lpm_mode lpm_set(enum lpm_mode target)
             _native_lpm_sleep();
             break;
 
-        /* XXX: unfinished modes: */
+            /* XXX: unfinished modes: */
         case LPM_SLEEP:
             /*TODO: implement*/
             printf("XXX: lpm_set(): LPM_SLEEP not implemented\n");

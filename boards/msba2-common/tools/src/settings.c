@@ -78,53 +78,73 @@ void init_settings(void)
 
             if (strncmp(buf, "file:", 5) == 0) {
                 for (p = buf + 5; isspace(*p); p++);
+
                 q = rindex(p, '\n');
+
                 if (q) {
                     *q = '\0';
                 }
+
                 q = rindex(p, '\r');
+
                 if (q) {
                     *q = '\0';
                 }
+
                 snprintf(file, sizeof(file), "%s", p);
             }
 
             if (strncmp(buf, "port:", 5) == 0) {
                 for (p = buf + 5; isspace(*p); p++);
+
                 q = rindex(p, '\n');
+
                 if (q) {
                     *q = '\0';
                 }
+
                 q = rindex(p, '\r');
+
                 if (q) {
                     *q = '\0';
                 }
+
                 snprintf(port, sizeof(port), "%s", p);
             }
 
             if (strncmp(buf, "baud:", 5) == 0) {
                 for (p = buf + 5; isspace(*p); p++);
+
                 q = rindex(p, '\n');
+
                 if (q) {
                     *q = '\0';
                 }
+
                 q = rindex(p, '\r');
+
                 if (q) {
                     *q = '\0';
                 }
+
                 snprintf(baud, sizeof(baud), "%s", p);
             }
 
             if (strncmp(buf, "xtal:", 5) == 0) {
                 for (p = buf + 5; isspace(*p); p++) ;
+
                 q = rindex(p, '\n');
+
                 if (q) {
                     *q = '\0';
                 }
+
                 q = rindex(p, '\r');
+
                 if (q) {
                     *q = '\0';
                 }
+
                 snprintf(crystal, sizeof(crystal), "%s", p);
             }
         }

@@ -10,7 +10,7 @@
  * @ingroup shell_commands
  * @{
  * @file    sc_cc1100.c
- * @brief   provides shell commands to configure cc110x driver 
+ * @brief   provides shell commands to configure cc110x driver
  * @author  Oliver Hahm <oliver.hahm@inria.fr>
  * @}
  */

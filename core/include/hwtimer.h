@@ -90,7 +90,7 @@ unsigned long hwtimer_now(void);
  * @param[in]    ptr            Argument to callback function
  * @return        timer id
  */
-int hwtimer_set(unsigned long offset, void (*callback)(void*), void *ptr);
+int hwtimer_set(unsigned long offset, void (*callback)(void *), void *ptr);
 
 /**
  * @brief Set a kernel timer
@@ -99,7 +99,7 @@ int hwtimer_set(unsigned long offset, void (*callback)(void*), void *ptr);
  * @param[in]    ptr            Argument to callback function
  * @return        timer id
  */
-int hwtimer_set_absolute(unsigned long absolute, void (*callback)(void*), void *ptr);
+int hwtimer_set_absolute(unsigned long absolute, void (*callback)(void *), void *ptr);
 
 /**
  * @brief Remove a kernel timer

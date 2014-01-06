@@ -105,6 +105,7 @@ uint32_t one_at_a_time_hash(const uint8_t *buf, size_t len)
         hash += hash << 10;
         hash ^= hash >> 6;
     }
+
     hash += hash << 3;
     hash ^= hash >> 11;
     hash += hash << 15;

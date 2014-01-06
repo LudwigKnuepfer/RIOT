@@ -221,9 +221,9 @@ uint8_t SSP0Unprepare(uint8_t chip)
             FIO1DIR |= BIT20 | BIT21 | BIT24;
             FIO1DIR &= ~BIT23;		 // MISO as Input
             FIO1SET = BIT20 | BIT24;	 /*
-                                          * CLK + SSEL + MOSI GPIO as Output
-                                          * TODO: depends on CPOL+CPHA Settings
-                                          */
+                                      * CLK + SSEL + MOSI GPIO as Output
+                                      * TODO: depends on CPOL+CPHA Settings
+                                      */
             FIO1CLR = BIT21;
             break;
         }
@@ -239,9 +239,9 @@ uint8_t SSP0Unprepare(uint8_t chip)
             FIO0DIR |= BIT15 | BIT16 | BIT18; //CLK + SSEL + MOSI GPIO as Output
             FIO0DIR &= ~BIT17; // MISO as Input
             FIO0SET = BIT15 | BIT16; /*
-                           * CLK + SSEL + MOSI GPIO as Output
-      * TODO: depends on CPOL+CPHA Settings
-      */
+                       * CLK + SSEL + MOSI GPIO as Output
+  * TODO: depends on CPOL+CPHA Settings
+  */
             FIO0CLR = BIT18;
             break;
         }

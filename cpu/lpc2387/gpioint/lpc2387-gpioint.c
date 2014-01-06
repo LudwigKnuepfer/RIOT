@@ -63,7 +63,7 @@ gpioint_set(int port, uint32_t bitmask, int flags, fp_irqcb callback)
     /* lookup registers */
     bit = number_of_highest_bit(bitmask);                       /* get irq mapping table index */
 
-    switch(port) {
+    switch (port) {
         case 0:                                                 /* PORT0 */
             cbdata = gpioint0;
             en_f = &IO0_INT_EN_F;

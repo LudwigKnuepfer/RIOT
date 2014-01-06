@@ -18,11 +18,11 @@ extern uintptr_t __heap_start;     ///< start of heap memory space
 extern uintptr_t __heap_end;       ///< maximum for end of heap memory space
 
 /// current position in heap
-static caddr_t heap = (caddr_t)&__heap_start;
+static caddr_t heap = (caddr_t) &__heap_start;
 /// maximum position in heap
-static const caddr_t heap_max = (caddr_t)&__heap_end;
+static const caddr_t heap_max = (caddr_t) &__heap_end;
 // start position in heap
-static const caddr_t heap_start = (caddr_t)&__heap_start;
+static const caddr_t heap_start = (caddr_t) &__heap_start;
 
 /*-----------------------------------------------------------------------------------*/
 caddr_t _sbrk_r(struct _reent *r, size_t incr)
@@ -32,7 +32,7 @@ caddr_t _sbrk_r(struct _reent *r, size_t incr)
     /* check all heaps for a chunk of the requested size */
     caddr_t new_heap = heap + incr;
 
-    if( new_heap <= heap_max ) {
+    if (new_heap <= heap_max) {
         caddr_t prev_heap = heap;
         heap = new_heap;
 
@@ -40,6 +40,7 @@ caddr_t _sbrk_r(struct _reent *r, size_t incr)
         restoreIRQ(cpsr);
         return prev_heap;
     }
+
     restoreIRQ(cpsr);
 
     r->_errno = ENOMEM;

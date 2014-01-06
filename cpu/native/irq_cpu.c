@@ -235,7 +235,7 @@ int _native_popsig(void)
     nleft = sizeof(int);
     i = 0;
 
-    while ((nleft > 0) && ((nread = real_read(_sig_pipefd[0], ((uint8_t*)&sig) + i, nleft))  != -1)) {
+    while ((nleft > 0) && ((nread = real_read(_sig_pipefd[0], ((uint8_t *)&sig) + i, nleft))  != -1)) {
         i += nread;
         nleft -= nread;
     }
@@ -296,6 +296,7 @@ void native_isr_entry(int sig, siginfo_t *info, void *context)
     if (real_write(_sig_pipefd[1], &sig, sizeof(int)) == -1) {
         err(EXIT_FAILURE, "native_isr_entry(): real_write()");
     }
+
     _native_sigpend++;
     //real_write(STDOUT_FILENO, "sigpend\n", 8);
 
@@ -311,6 +312,7 @@ void native_isr_entry(int sig, siginfo_t *info, void *context)
         //printf("interrupts are off, but I caught a signal.\n");
         return;
     }
+
     if (_native_in_isr != 0) {
         //real_write(STDOUT_FILENO, "interrupts in ISR!!\n", 20);
         return;
@@ -327,10 +329,11 @@ void native_isr_entry(int sig, siginfo_t *info, void *context)
         _native_saved_eip = ((struct sigcontext *)context)->sc_eip;
         ((struct sigcontext *)context)->sc_eip = (unsigned int)&_native_sig_leave_tramp;
 #else
+
         if (
-                ((void*)(((ucontext_t *)context)->uc_mcontext.gregs[REG_EIP]))
-                > ((void*)process_heap_address)
-           ) {
+            ((void *)(((ucontext_t *)context)->uc_mcontext.gregs[REG_EIP]))
+            > ((void *)process_heap_address)
+        ) {
             //printf("\n\033[36mEIP:\t%p\nHEAP:\t%p\nnot switching\n\n\033[0m", (void*)((ucontext_t *)context)->uc_mcontext.gregs[REG_EIP], (void*)process_heap_address);
         }
         else {
@@ -341,6 +344,7 @@ void native_isr_entry(int sig, siginfo_t *info, void *context)
             _native_saved_eip = ((ucontext_t *)context)->uc_mcontext.gregs[REG_EIP];
             ((ucontext_t *)context)->uc_mcontext.gregs[REG_EIP] = (unsigned int)&_native_sig_leave_tramp;
         }
+
 #endif
         // TODO: change sigmask?
     }
@@ -360,9 +364,11 @@ int register_interrupt(int sig, void (*handler)(void))
     DEBUG("register_interrupt()\n");
 
     _native_syscall_enter();
+
     if (sigdelset(&_native_sig_set, sig)) {
         err(EXIT_FAILURE, "register_interrupt: sigdelset");
     }
+
     if (sigaddset(&_native_sig_set_dint, sig)) {
         err(EXIT_FAILURE, "register_interrupt: sigaddset");
     }
@@ -374,6 +380,7 @@ int register_interrupt(int sig, void (*handler)(void))
     sa.sa_sigaction = native_isr_entry;
     sa.sa_mask = _native_sig_set_dint;
     sa.sa_flags = SA_RESTART | SA_SIGINFO | SA_ONSTACK;
+
     for (int i = 0; i < 255; i++) {
         if (native_irq_handlers[i].func != NULL) {
             if (sigaction(sig, &sa, NULL)) {
@@ -381,6 +388,7 @@ int register_interrupt(int sig, void (*handler)(void))
             }
         }
     }
+
     _native_syscall_leave();
 
     return 0;
@@ -394,9 +402,11 @@ int unregister_interrupt(int sig)
     DEBUG("XXX: unregister_interrupt()\n");
 
     _native_syscall_enter();
+
     if (sigaddset(&_native_sig_set, sig) == -1) {
         err(EXIT_FAILURE, "unregister_interrupt: sigaddset");
     }
+
     if (sigdelset(&_native_sig_set_dint, sig) == -1) {
         err(EXIT_FAILURE, "unregister_interrupt: sigdelset");
     }
@@ -408,11 +418,14 @@ int unregister_interrupt(int sig)
     sa.sa_handler = SIG_IGN; /* there may be late signals, so we need to ignore those */
     sa.sa_mask = _native_sig_set_dint;
     sa.sa_flags = SA_RESTART | SA_SIGINFO | SA_ONSTACK;
+
     if (sigaction(sig, &sa, NULL)) {
         err(EXIT_FAILURE, "unregister_interrupt: sigaction");
     }
+
     /* change sigmask for remaining signal handlers */
     sa.sa_sigaction = native_isr_entry;
+
     for (int i = 0; i < 255; i++) {
         if (native_irq_handlers[i].func != NULL) {
             if (sigaction(sig, &sa, NULL)) {
@@ -420,6 +433,7 @@ int unregister_interrupt(int sig)
             }
         }
     }
+
     _native_syscall_leave();
 
     return 0;
@@ -446,13 +460,15 @@ void native_interrupt_init(void)
     DEBUG("XXX: native_interrupt_init()\n");
 
     process_heap_address = malloc(sizeof(int));
+
     if (process_heap_address == NULL) {
         err(EXIT_FAILURE, "native_interrupt_init: malloc");
     }
+
     free(process_heap_address);
 
     VALGRIND_STACK_REGISTER(__isr_stack, __isr_stack + sizeof(__isr_stack));
-    VALGRIND_DEBUG("VALGRIND_STACK_REGISTER(%p, %p)\n", __isr_stack, (void*)((int)__isr_stack + sizeof(__isr_stack)));
+    VALGRIND_DEBUG("VALGRIND_STACK_REGISTER(%p, %p)\n", __isr_stack, (void *)((int)__isr_stack + sizeof(__isr_stack)));
 
     native_interrupts_enabled = 1;
     _native_sigpend = 0;
@@ -473,6 +489,7 @@ void native_interrupt_init(void)
     if (sigprocmask(SIG_SETMASK, NULL, &_native_sig_set) == -1) {
         err(EXIT_FAILURE, "native_interrupt_init(): sigprocmask");
     }
+
     if (sigprocmask(SIG_SETMASK, NULL, &_native_sig_set_dint) == -1) {
         err(EXIT_FAILURE, "native_isr_entry(): sigprocmask");
     }
@@ -482,6 +499,7 @@ void native_interrupt_init(void)
     if (sigdelset(&_native_sig_set, SIGUSR1) == -1) {
         err(EXIT_FAILURE, "native_interrupt_init: sigdelset");
     }
+
     if (sigdelset(&_native_sig_set_dint, SIGUSR1) == -1) {
         err(EXIT_FAILURE, "native_interrupt_init: sigdelset");
     }
@@ -520,12 +538,15 @@ void native_interrupt_init(void)
     /* allow for ctrl+c to shut down gracefully always */
     //register_interrupt(SIGINT, shutdown);
     sa.sa_sigaction = shutdown;
+
     if (sigdelset(&_native_sig_set, SIGINT) == -1) {
         err(EXIT_FAILURE, "native_interrupt_init: sigdelset");
     }
+
     if (sigdelset(&_native_sig_set_dint, SIGINT) == -1) {
         err(EXIT_FAILURE, "native_interrupt_init: sigdelset");
     }
+
     if (sigaction(SIGINT, &sa, NULL)) {
         err(EXIT_FAILURE, "native_interrupt_init: sigaction");
     }

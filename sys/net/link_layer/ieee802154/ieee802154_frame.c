@@ -1,5 +1,5 @@
 /**
- * implementation for the IEEE 802.15.4 frame format 
+ * implementation for the IEEE 802.15.4 frame format
  *
  * Copyright (C) 2013  INRIA.
  *
@@ -10,7 +10,7 @@
  * @ingroup sixlowpan
  * @{
  * @file    ieee802154_frame.c
- * @brief   IEEE 802.14.4 framing operations 
+ * @brief   IEEE 802.14.4 framing operations
  * @author  Stephan Zeisberg <zeisberg@mi.fu-berlin.de>
  * @author  Oliver Hahm <oliver.hahm@inria.fr>
  * @}
@@ -29,15 +29,15 @@ uint8_t ieee802154_frame_init(ieee802154_frame_t *frame, uint8_t *buf)
     uint8_t index = 0;
 
     buf[index] = ((frame->fcf.frame_type) |
-                 (frame->fcf.sec_enb << 3) |
-                 (frame->fcf.frame_pend << 4) |
-                 (frame->fcf.ack_req << 5) |
-                 (frame->fcf.panid_comp << 6));
+                  (frame->fcf.sec_enb << 3) |
+                  (frame->fcf.frame_pend << 4) |
+                  (frame->fcf.ack_req << 5) |
+                  (frame->fcf.panid_comp << 6));
     index++;
 
     buf[index] = ((frame->fcf.dest_addr_m << 2) |
-                 (frame->fcf.frame_ver << 4) |
-                 (frame->fcf.src_addr_m << 6));
+                  (frame->fcf.frame_ver << 4) |
+                  (frame->fcf.src_addr_m << 6));
 
     index++;
 
@@ -170,7 +170,7 @@ uint8_t ieee802154_frame_read(uint8_t *buf, ieee802154_frame_t *frame,
 
     index += 2;
 
-    switch(frame->fcf.dest_addr_m) {
+    switch (frame->fcf.dest_addr_m) {
         case (0): {
             printf("fcf.dest_addr_m: pan identifier/address fields empty\n");
             break;
@@ -202,7 +202,7 @@ uint8_t ieee802154_frame_read(uint8_t *buf, ieee802154_frame_t *frame,
         index += 2;
     }
 
-    switch(frame->fcf.src_addr_m) {
+    switch (frame->fcf.src_addr_m) {
         case (0): {
             printf("fcf.src_addr_m: pan identifier/address fields empty\n");
             break;

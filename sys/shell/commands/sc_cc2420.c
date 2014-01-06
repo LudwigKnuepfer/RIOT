@@ -11,13 +11,15 @@ char text_msg[TEXT_SIZE];
 msg_t mesg;
 transceiver_command_t tcmd;
 
-void _cc2420_get_set_address_handler(char *addr) {
+void _cc2420_get_set_address_handler(char *addr)
+{
     uint16_t a;
 
     tcmd.transceivers = TRANSCEIVER_CC2420;
     tcmd.data = &a;
-    mesg.content.ptr = (char*) &tcmd;
-    a = atoi(addr+5);
+    mesg.content.ptr = (char *) &tcmd;
+    a = atoi(addr + 5);
+
     if (strlen(addr) > 5) {
         printf("[cc2420] Trying to set address %i\n", a);
         mesg.type = SET_ADDRESS;
@@ -25,17 +27,20 @@ void _cc2420_get_set_address_handler(char *addr) {
     else {
         mesg.type = GET_ADDRESS;
     }
+
     msg_send_receive(&mesg, &mesg, transceiver_pid);
     printf("[cc2420] Got address: %i\n", a);
 }
 
-void _cc2420_get_set_channel_handler(char *chan) {
+void _cc2420_get_set_channel_handler(char *chan)
+{
     int16_t c;
 
     tcmd.transceivers = TRANSCEIVER_CC2420;
     tcmd.data = &c;
-    mesg.content.ptr = (char*) &tcmd;
-    c = atoi(chan+5);
+    mesg.content.ptr = (char *) &tcmd;
+    c = atoi(chan + 5);
+
     if (strlen(chan) > 5) {
         printf("[cc2420] Trying to set channel %i\n", c);
         mesg.type = SET_CHANNEL;
@@ -43,17 +48,20 @@ void _cc2420_get_set_channel_handler(char *chan) {
     else {
         mesg.type = GET_CHANNEL;
     }
+
     msg_send_receive(&mesg, &mesg, transceiver_pid);
     printf("[cc2420] Got channel: %i\n", c);
 }
 
-void _cc2420_get_set_pan_handler(char *pan) {
+void _cc2420_get_set_pan_handler(char *pan)
+{
     uint16_t p;
 
     tcmd.transceivers = TRANSCEIVER_CC2420;
     tcmd.data = &p;
-    mesg.content.ptr = (char*) &tcmd;
-    p = atoi(pan+4);
+    mesg.content.ptr = (char *) &tcmd;
+    p = atoi(pan + 4);
+
     if (strlen(pan) > 4) {
         printf("[cc2420] Trying to set pan %i\n", p);
         mesg.type = SET_PAN;
@@ -61,11 +69,13 @@ void _cc2420_get_set_pan_handler(char *pan) {
     else {
         mesg.type = GET_PAN;
     }
+
     msg_send_receive(&mesg, &mesg, transceiver_pid);
     printf("[cc2420] Got pan: %i\n", p);
 }
 
-void _cc2420_send_handler(char *pkt) {
+void _cc2420_send_handler(char *pkt)
+{
     radio_packet_t p;
     uint32_t response;
     uint16_t addr;
@@ -74,36 +84,41 @@ void _cc2420_send_handler(char *pkt) {
     tcmd.transceivers = TRANSCEIVER_CC2420;
     tcmd.data = &p;
 
-    tok = strtok(pkt+7, " ");
+    tok = strtok(pkt + 7, " ");
+
     if (tok) {
         addr = atoi(tok);
         tok = strtok(NULL, " ");
+
         if (tok) {
             memset(text_msg, 0, TEXT_SIZE);
             memcpy(text_msg, tok, strlen(tok));
-    /*    if (sscanf(pkt, "txtsnd %hu %s", &(addr), text_msg) == 2) {*/
-            p.data = (uint8_t*) text_msg;
+            /*    if (sscanf(pkt, "txtsnd %hu %s", &(addr), text_msg) == 2) {*/
+            p.data = (uint8_t *) text_msg;
             p.length = strlen(text_msg) + 1;
             p.dst = addr;
             mesg.type = SND_PKT;
-            mesg.content.ptr = (char*) &tcmd;
-            printf("[cc2420] Sending packet of length %u to %u: %s\n", p.length, p.dst, (char*) p.data);
+            mesg.content.ptr = (char *) &tcmd;
+            printf("[cc2420] Sending packet of length %u to %u: %s\n", p.length, p.dst, (char *) p.data);
             msg_send_receive(&mesg, &mesg, transceiver_pid);
             response = mesg.content.value;
             printf("[cc2420] Packet sent: %lu\n", response);
             return;
         }
     }
+
     puts("Usage:\ttxtsnd <ADDR> <MSG>");
 }
 
-void _cc2420_monitor_handler(char *mode) {
+void _cc2420_monitor_handler(char *mode)
+{
     unsigned int m;
 
     tcmd.transceivers = TRANSCEIVER_CC2420;
     tcmd.data = &m;
-    mesg.content.ptr = (char*) &tcmd;
-    m = atoi(mode+8);
+    mesg.content.ptr = (char *) &tcmd;
+    m = atoi(mode + 8);
+
     if (strlen(mode) > 8) {
         printf("Setting monitor mode: %u\n", m);
         mesg.type = SET_MONITOR;

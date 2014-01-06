@@ -66,7 +66,7 @@ static int appserver_create_content(char **prefix, uint8_t *out)
     char buf[CCNL_RIOT_CHUNK_SIZE - 1];
 
     for (int i = 0; i < CCNL_RIOT_CHUNK_SIZE - 1; i++) {
-        buf[i] = 'a' + i%26;
+        buf[i] = 'a' + i % 26;
     }
 
     int len = mkContent(prefix, buf, CCNL_RIOT_CHUNK_SIZE - 1, out);

@@ -56,15 +56,16 @@ int uart0_puts(char *astring, int length)
     offset = 0;
 
     while (
-            (length - offset > 0) && (
-                (nwritten = write(
-                               STDOUT_FILENO,
-                               astring+offset,
-                               length-offset)
-                ) > 0)
-          ) {
+        (length - offset > 0) && (
+            (nwritten = write(
+                            STDOUT_FILENO,
+                            astring + offset,
+                            length - offset)
+            ) > 0)
+    ) {
         offset += nwritten;
     }
+
     if (nwritten == -1) {
         err(EXIT_FAILURE, "uart0_puts: write");
     }
@@ -81,9 +82,10 @@ int uart0_puts(char *astring, int length)
 void *get_in_addr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET) {
-        return &(((struct sockaddr_in*)sa)->sin_addr);
+        return &(((struct sockaddr_in *)sa)->sin_addr);
     }
-    return &(((struct sockaddr_in6*)sa)->sin6_addr);
+
+    return &(((struct sockaddr_in6 *)sa)->sin6_addr);
 }
 
 #ifndef UART_TCPPORT
@@ -93,6 +95,7 @@ int init_tcp_socket(char *tcpport)
 {
     struct addrinfo hints, *info, *p;
     int i, s;
+
     if (tcpport == NULL) {
         tcpport = UART_TCPPORT;
     }
@@ -104,7 +107,7 @@ int init_tcp_socket(char *tcpport)
 
     if ((i = getaddrinfo(NULL, tcpport, &hints, &info)) != 0) {
         errx(EXIT_FAILURE,
-                "init_uart_socket: getaddrinfo: %s", gai_strerror(i));
+             "init_uart_socket: getaddrinfo: %s", gai_strerror(i));
     }
 
     for (p = info; p != NULL; p = p->ai_next) {
@@ -114,6 +117,7 @@ int init_tcp_socket(char *tcpport)
         }
 
         i = 1;
+
         if (setsockopt(s, SOL_SOCKET, SO_REUSEADDR, &i, sizeof(int)) == -1) {
             err(EXIT_FAILURE, "init_uart_socket: setsockopt");
         }
@@ -126,9 +130,11 @@ int init_tcp_socket(char *tcpport)
 
         break;
     }
+
     if (p == NULL)  {
         errx(EXIT_FAILURE, "init_uart_socket: failed to bind\n");
     }
+
     freeaddrinfo(info);
 
     if (listen(s, 1) == -1) {
@@ -150,6 +156,7 @@ int init_unix_socket()
     sa.sun_family = AF_UNIX;
     snprintf(sa.sun_path, sizeof(sa.sun_path), "/tmp/riot.tty.%d", getpid());
     unlink(sa.sun_path); /* remove stale socket */
+
     if (bind(s, (struct sockaddr *)&sa, SUN_LEN(&sa)) == -1) {
         err(EXIT_FAILURE, "init_unix_socket: bind");
     }
@@ -169,6 +176,7 @@ void handle_uart_in()
     DEBUG("handle_uart_in\n");
 
     nread = read(STDIN_FILENO, buf, sizeof(buf));
+
     if (nread == -1) {
         err(1, "handle_uart_in(): read()");
     }
@@ -180,9 +188,11 @@ void handle_uart_in()
                     err(EXIT_FAILURE, "handle_uart_in: dup2(STDOUT_FILENO)");
                 }
             }
+
             if (dup2(_native_null_in_pipe[0], STDIN_FILENO) == -1) {
                 err(EXIT_FAILURE, "handle_uart_in: dup2(STDIN_FILENO)");
             }
+
             _native_uart_conn = 0;
             warnx("closed stdio");
         }
@@ -190,9 +200,11 @@ void handle_uart_in()
             errx(EXIT_FAILURE, "handle_uart_in: unhandled situation!");
         }
     }
-    for(int pos = 0; pos < nread; pos++) {
+
+    for (int pos = 0; pos < nread; pos++) {
         uart0_handle_incoming(buf[pos]);
     }
+
     uart0_notify_thread();
 
     thread_yield();
@@ -207,6 +219,7 @@ void handle_uart_sock()
     t = sizeof(remote);
 
     _native_syscall_enter();
+
     if ((s = accept(_native_uart_sock, &remote, &t)) == -1) {
         err(EXIT_FAILURE, "handle_uart_sock: accept");
     }
@@ -217,9 +230,11 @@ void handle_uart_sock()
     if (dup2(s, STDOUT_FILENO) == -1) {
         err(EXIT_FAILURE, "handle_uart_sock: dup2()");
     }
+
     if (dup2(s, STDIN_FILENO) == -1) {
         err(EXIT_FAILURE, "handle_uart_sock: dup2()");
     }
+
     _native_syscall_leave();
 
     _native_uart_conn = s;
@@ -242,6 +257,7 @@ int _native_set_uart_fds(void)
 {
     DEBUG("_native_set_uart_fds");
     FD_SET(STDIN_FILENO, &_native_rfds);
+
     if (_native_uart_sock == -1) {
         return (STDIN_FILENO);
     }

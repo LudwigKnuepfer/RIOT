@@ -384,7 +384,7 @@ static int send_cmd(unsigned int idx, unsigned long arg, unsigned int rt, unsign
 
     if (idx & 0x80) {				/* Send a CMD55 prior to the specified command if it is ACMD class */
         if (!send_cmd(CMD55, (unsigned long)CardRCA << 16, 1, buff)	/* When CMD55 is faild, */
-           || !(buff[0] & 0x00000020)) {
+            || !(buff[0] & 0x00000020)) {
             return 0;    /* exit with error */
         }
     }
@@ -651,7 +651,7 @@ DSTATUS MCI_initialize(void)
 
     if (ty & CT_SDC) {		/* Set wide bus mode (for SDCs) */
         if (!send_cmd(ACMD6, 2, 1, resp)	/* Set bus mode of SDC */
-           || (resp[0] & 0xFDF90000)) {
+            || (resp[0] & 0xFDF90000)) {
             //printf("MCI ACMD6 fail\n");
             goto di_fail;
         }
@@ -724,7 +724,7 @@ DRESULT MCI_read(unsigned char *buff, unsigned long sector, unsigned char count)
     cmd = (count > 1) ? CMD18 : CMD17;		/* Transfer type: Single block or Multiple block */
 
     if (send_cmd(cmd, sector, 1, &resp)		/* Start to read */
-       && !(resp & 0xC0580000)) {
+        && !(resp & 0xC0580000)) {
         rp = 0;
 
         do {
@@ -804,7 +804,7 @@ DRESULT MCI_write(const unsigned char *buff, unsigned long sector, unsigned char
         cmd = (CardType & CT_SDC) ? ACMD23 : CMD23;
 
         if (!send_cmd(cmd, count, 1, &rc)		/* Preset number of blocks to write */
-           || (rc & 0xC0580000)) {
+            || (rc & 0xC0580000)) {
             return RES_ERROR;
         }
 
@@ -812,7 +812,7 @@ DRESULT MCI_write(const unsigned char *buff, unsigned long sector, unsigned char
     }
 
     if (!send_cmd(cmd, sector, 1, &rc)			/* Send a write command */
-       || (rc & 0xC0580000)) {
+        || (rc & 0xC0580000)) {
         return RES_ERROR;
     }
 
@@ -889,7 +889,7 @@ DRESULT MCI_ioctl(
 
     res = RES_ERROR;
 
-    switch(ctrl) {
+    switch (ctrl) {
         case CTRL_SYNC :	/* Make sure that all data has been written on the media */
             if (wait_ready(500)) {	/* Wait for card enters tarn state */
                 res = RES_OK;
@@ -953,7 +953,7 @@ DRESULT MCI_ioctl(
             break;
 
         case CTRL_POWER :
-            switch(ptr[0]) {
+            switch (ptr[0]) {
                 case 0:		/* Sub control code == 0 (POWER_OFF) */
                     power_off();		/* Power off */
                     res = RES_OK;
@@ -996,7 +996,7 @@ DRESULT MCI_ioctl(
                     ready_reception(1, 64);				/* Ready to receive data blocks */
 
                     if (send_cmd(ACMD13, 0, 1, resp)	/* Start to read */
-                       && !(resp[0] & 0xC0580000)) {
+                        && !(resp[0] & 0xC0580000)) {
                         while ((XferWp == 0) && !(XferStat & 0xC));
 
                         if (!(XferStat & 0xC)) {

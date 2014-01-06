@@ -55,22 +55,26 @@ extern uint8_t buffer[BUFFER_SIZE];
 
 extern int sixlowip_reg[SIXLOWIP_MAX_REGISTERED];
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     ipv6_addr_t addr;
     ipv6_addr_type_t type;
     ndp_addr_state_t state;
     timex_t val_ltime;
     timex_t pref_ltime;
-} addr_list_t;
+}
+addr_list_t;
 
-typedef struct __attribute__((packed)) {
+typedef struct __attribute__((packed))
+{
     ieee_802154_short_t saddr;
     ieee_802154_long_t laddr;
     addr_list_t addr_list[IFACE_ADDR_LIST_LEN];
     uint8_t adv_cur_hop_limit;
     uint32_t adv_reachable_time;
     uint32_t adv_retrans_timer;
-} iface_t;
+}
+iface_t;
 
 extern iface_t iface;
 

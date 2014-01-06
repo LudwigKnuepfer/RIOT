@@ -1,10 +1,10 @@
-  /*
-   * uart0.c - Implementation of the uart.
-   * Copyright (C) 2013 Milan Babel <babel@inf.fu-berlin.de>
-   *
-   * This source code is licensed under the GNU General Public License,
-   * Version 3.  See the file LICENSE for more details.
-   */
+/*
+ * uart0.c - Implementation of the uart.
+ * Copyright (C) 2013 Milan Babel <babel@inf.fu-berlin.de>
+ *
+ * This source code is licensed under the GNU General Public License,
+ * Version 3.  See the file LICENSE for more details.
+ */
 
 #include <stdio.h>
 #include "board.h"
@@ -33,31 +33,39 @@ void usart0irq(void);
 /**
  * \brief the interrupt function
  */
-interrupt(USART0RX_VECTOR) usart0irq(void) {
+interrupt(USART0RX_VECTOR) usart0irq(void)
+{
     int dummy = 0;
+
     /* Check status register for receive errors. */
-    if(U0RCTL & RXERR) {
+    if (U0RCTL & RXERR) {
         if (U0RCTL & FE) {
-           puts("rx framing error");
+            puts("rx framing error");
         }
+
         if (U0RCTL & OE) {
             puts("rx overrun error");
         }
+
         if (U0RCTL & PE) {
             puts("rx parity error");
         }
+
         if (U0RCTL & BRK) {
             puts("rx break error");
         }
+
         /* Clear error flags by forcing a dummy read. */
         dummy = U0RXBUF;
     }
+
 #ifdef MODULE_UART0
     else if (uart0_handler_pid) {
-                dummy = U0RXBUF;
-                uart0_handle_incoming(dummy);
-                uart0_notify_thread();
-            }
+        dummy = U0RXBUF;
+        uart0_handle_incoming(dummy);
+        uart0_notify_thread();
+    }
+
 #endif
 }
 

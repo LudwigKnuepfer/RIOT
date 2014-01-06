@@ -10,7 +10,7 @@ static inline void busy_wait(void);
 /*---------------------------------------------------------------------------*/
 uint8_t flashrom_erase(uint8_t *addr)
 {
-	// TODO implement this function
+    // TODO implement this function
     return 0;
 }
 /*---------------------------------------------------------------------------*/

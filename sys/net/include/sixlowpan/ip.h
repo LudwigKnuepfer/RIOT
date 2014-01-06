@@ -369,7 +369,7 @@ void ipv6_iface_print_addrs(void);
  *
  * @param   next_hop    function that returns the next hop to reach dest
  */
-void ipv6_iface_set_routing_provider(ipv6_addr_t *(*next_hop)(ipv6_addr_t* dest));
+void ipv6_iface_set_routing_provider(ipv6_addr_t * (*next_hop)(ipv6_addr_t *dest));
 
 /**
  * @brief Calculates the IPv6 upper-layer checksum.

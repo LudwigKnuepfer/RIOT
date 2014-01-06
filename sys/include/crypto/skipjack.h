@@ -8,7 +8,7 @@
 /**
  * @ingroup     sys_crypto
  * @{
- * 
+ *
  * @file        skipjack.h
  * @brief       Headers for the implementation of the SkipJack cipher-algorithm
  *
@@ -87,7 +87,7 @@
  * @typedef skipjack_context_t
  */
 typedef struct {
-        // 2 times keysize. makes unrolling keystream easier / efficient
+    // 2 times keysize. makes unrolling keystream easier / efficient
     uint8_t skey [ 20 ];
 } skipjack_context_t;
 

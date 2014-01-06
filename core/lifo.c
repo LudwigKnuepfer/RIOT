@@ -28,6 +28,7 @@ int lifo_empty(int *array)
 void lifo_init(int *array, int n)
 {
     DEBUG("lifo_init(%i)\n", n);
+
     for (int i = 0; i <= n; i++) {
         array[i] = -1;
     }
@@ -40,9 +41,11 @@ void lifo_insert(int *array, int i)
     int index = i + 1;
 
 #if DEVELHELP
+
     if ((array[index] != -1) && (array[0] != -1)) {
         printf("lifo_insert: overwriting array[%i] == %i with %i\n\n\n\t\tThe lifo is broken now.\n\n\n", index, array[index], array[0]);
     }
+
 #endif
 
     array[index] = array[0];
@@ -61,7 +64,7 @@ int lifo_get(int *array)
 #if DEVELHELP
     /* make sure a double insert does not result in an infinite
      * resource of values */
-    array[head+1] = -1;
+    array[head + 1] = -1;
 #endif
 
     DEBUG("lifo_get: returning %i\n", head);

@@ -79,7 +79,7 @@ void mutex_wait(struct mutex_t *mutex)
         return;
     }
 
-    sched_set_status((tcb_t*) active_thread, STATUS_MUTEX_BLOCKED);
+    sched_set_status((tcb_t *) active_thread, STATUS_MUTEX_BLOCKED);
 
     queue_node_t n;
     n.priority = (unsigned int) active_thread->priority;
@@ -105,7 +105,7 @@ void mutex_unlock(struct mutex_t *mutex)
     if (mutex->val != 0) {
         if (mutex->queue.next) {
             queue_node_t *next = queue_remove_head(&(mutex->queue));
-            tcb_t *process = (tcb_t*) next->data;
+            tcb_t *process = (tcb_t *) next->data;
             DEBUG("%s: waking up waiter.\n", process->name);
             sched_set_status(process, STATUS_PENDING);
 

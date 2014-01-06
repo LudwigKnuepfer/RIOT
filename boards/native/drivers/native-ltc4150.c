@@ -41,9 +41,11 @@ static int _native_ltc_hwtimer_id = -1;
 static void _native_ltc_int_handler()
 {
     DEBUG("_native_ltc_int_handler()\n");
+
     if (_native_ltc_hwtimer_id != -1) {
         ltc4150_interrupt();
         _native_ltc_hwtimer_id = hwtimer_set(LTC_TIMER_INTERVAL, _native_ltc_int_handler, NULL);
+
         if (_native_ltc_hwtimer_id == -1) {
             errx(1, "_int_handler: hwtimer_set");
         }
@@ -63,10 +65,12 @@ void ltc4150_disable_int(void)
 {
     unsigned state = disableIRQ();
     DEBUG("ltc4150_disable_int()\n");
+
     if (_native_ltc_hwtimer_id != -1) {
         hwtimer_remove(_native_ltc_hwtimer_id);
         _native_ltc_hwtimer_id = -1;
     }
+
     restoreIRQ(state);
 }
 
@@ -77,6 +81,7 @@ void ltc4150_enable_int(void)
 {
     DEBUG("ltc4150_enable_int()\n");
     _native_ltc_hwtimer_id = hwtimer_set(LTC_TIMER_INTERVAL, _native_ltc_int_handler, NULL);
+
     if (_native_ltc_hwtimer_id == -1) {
         errx(1, "ltc4150_enable_int: hwtimer_set");
     }
