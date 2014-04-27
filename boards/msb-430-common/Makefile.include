@@ -4,7 +4,7 @@ export MCU = msp430f1612
 
 # toolchain config
 export PREFIX = msp430-
-export CC = $(PREFIX)gcc
+export CC = ccache $(PREFIX)gcc
 export AR = $(PREFIX)ar
 export CFLAGS += -Wstrict-prototypes -gdwarf-2 -Os -Wall -mmcu=$(MCU)
 export ASFLAGS += -mmcu=$(MCU) --defsym $(MCU)=1 --gdwarf-2

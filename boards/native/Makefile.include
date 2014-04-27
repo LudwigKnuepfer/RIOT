@@ -9,7 +9,7 @@ export ELF = $(BINDIR)$(APPLICATION).elf
 
 # toolchain:
 export PREFIX =
-export CC ?= $(PREFIX)gcc
+export CC ?= ccache $(PREFIX)gcc
 export AR ?= $(PREFIX)ar
 export AS ?= $(PREFIX)as
 export LINK ?= $(PREFIX)gcc
