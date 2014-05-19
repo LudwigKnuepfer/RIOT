@@ -10,8 +10,8 @@
 
 /**
  * @{
+ * @file
  * @author  Ludwig Ortmann <ludwig.ortmann@fu-berlin.de>
- * @}
  */
 
 #ifndef NATIVENET_INTERNAL_H
@@ -37,10 +37,30 @@ struct rx_buffer_s {
     char data[NATIVE_MAX_DATA_LENGTH];
 };
 
+/** packet buffer for access by the transceiver thread */
 extern struct rx_buffer_s _nativenet_rx_buffer[RX_BUF_SIZE];
+
+/** long address */
 extern uint64_t _native_net_addr_long;
+/** short address */
 extern radio_address_t _native_net_addr;
 
+/**
+ * @brief   incoming data network abstraction function
+ *
+ * @details
+ * receives a radio packet from the network layer, performs generic
+ * address filtering, inserts it in the trancseiver thread's buffer
+ * and informs the transceiver thread.
+ *
+ * @param[in] packet    the radio packet from the network layer
+ */
 void _nativenet_handle_packet(radio_packet_t *packet);
+
+/**
+ *
+ */
 int8_t send_buf(radio_packet_t *packet);
+
 #endif /* NATIVENET_INTERNAL_H */
+/** @}
