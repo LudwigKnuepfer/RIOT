@@ -1,1 +1,5 @@
 export NATIVEINCLUDES += -I$(RIOTCPU)/native/include -I$(RIOTBASE)/sys/include
+
+ifneq (,$(filter sixlowpan,$(USEMODULE)))
+  CFLAGS += -D'NATIVE_MAX_DATA_LENGTH=(127)'
+endif

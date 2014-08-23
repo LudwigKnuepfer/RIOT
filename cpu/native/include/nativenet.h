@@ -34,11 +34,7 @@
 
 #ifndef NATIVE_MAX_DATA_LENGTH
 #include "tap.h"
-#ifdef MODULE_SIXLOWPAN
-#define NATIVE_MAX_DATA_LENGTH (127)
-#else
 #define NATIVE_MAX_DATA_LENGTH (TAP_MAX_DATA)
-#endif
 #else
 #warning be careful not to exceed (TAP_MAX_DATA) with NATIVE_MAX_DATA_LENGTH
 #endif /* NATIVE_MAX_DATA_LENGTH */
