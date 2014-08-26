@@ -1,0 +1,11 @@
+{
+    priority_queue_add/SorG
+    exp-sgcheck:SorG
+    fun:priority_queue_add
+}
+
+{
+    priority_queue_remove/SorG
+    exp-sgcheck:SorG
+    fun:priority_queue_remove
+}
