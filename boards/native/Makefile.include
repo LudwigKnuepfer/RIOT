@@ -73,16 +73,23 @@ endif
 
 export ASFLAGS =
 export DEBUGGER_FLAGS = --args $(ELF) $(TERMFLAGS)
-term-valgrind: export VALGRIND_FLAGS ?= \
+term-memcheck: export MEMCHECK_FLAGS ?= \
+	--tool=memcheck \
 	--track-origins=yes \
 	--fullpath-after=$(RIOTBASE)/ \
 	--read-var-info=yes
-term-cachegrind: export CACHEGRIND_FLAGS += --tool=cachegrind
+term-sgcheck: export SGCHECK_FLAGS ?= \
+	--tool=exp-sgcheck \
+	--fullpath-after=$(RIOTBASE)/ \
+	--read-var-info=yes
+term-cachegrind: export CACHEGRIND_FLAGS ?= \
+	--tool=cachegrind \
+	--fullpath-after=$(RIOTBASE)/ \
+	--read-var-info=yes
 term-gprof: export TERMPROG = GMON_OUT_PREFIX=gmon.out $(ELF)
 all-valgrind: export CFLAGS += -DHAVE_VALGRIND_H -g
 all-valgrind: export NATIVEINCLUDES += $(shell pkg-config valgrind --cflags)
 all-debug: export CFLAGS += -g
-all-cachegrind: export CFLAGS += -g
 all-gprof: export CFLAGS += -pg
 all-gprof: export LINKFLAGS += -pg
 
@@ -115,14 +122,17 @@ all-valgrind: all
 
 all-cachegrind: all
 
-term-valgrind:
+term-memcheck:
 # use this if you want to attach gdb from valgrind:
 #	echo 0 > /proc/sys/kernel/yama/ptrace_scope
-#	VALGRIND_FLAGS += --db-attach=yes
-	$(VALGRIND) $(VALGRIND_FLAGS) $(ELF) $(PORT)
+#	MEMCHECK_FLAGS += --db-attach=yes
+	$(VALGRIND) $(MEMCHECK_FLAGS) $(ELF) $(PORT)
 
 term-cachegrind:
 	$(VALGRIND) $(CACHEGRIND_FLAGS) $(ELF) $(PORT)
+
+term-sgcheck:
+	$(VALGRIND) $(SGCHECK_FLAGS) $(ELF) $(PORT)
 
 term-gprof: term
 
