@@ -192,8 +192,10 @@ The order of command line arguments matters.\n");
 
 }
 
-__attribute__((constructor)) static void startup(int argc, char **argv)
+int startup(int argc, char **argv, char **env)
 {
+    (void) env;
+
     _native_init_syscalls();
 
     _native_argv = argv;
@@ -319,4 +321,31 @@ __attribute__((constructor)) static void startup(int argc, char **argv)
 
     puts("RIOT native hardware initialization complete.\n");
     kernel_init();
+
+    return 0;
+}
+
+int (*real__libc_start_main)(int (*main) (int, char * *, char * *), int argc, char * * ubp_av, void (*init) (void), void (*fini) (void), void (*rtld_fini) (void), void (* stack_end));
+
+int __libc_start_main(
+        int (*main) (int, char * *, char * *),
+        int argc,
+        char * * ubp_av,
+        void (*init) (void),
+        void (*fini) (void),
+        void (*rtld_fini) (void),
+        void (* stack_end))
+{
+    (void) main;
+
+    *(void **)(&real__libc_start_main) = dlsym(RTLD_NEXT, "__libc_start_main");
+    real__libc_start_main(
+            &startup,
+            argc, ubp_av,
+            init,
+            fini,
+            rtld_fini,
+            stack_end
+            );
+    return 0;
 }
