@@ -192,7 +192,7 @@ The order of command line arguments matters.\n");
 
 }
 
-__attribute__((constructor)) static void startup(int argc, char **argv)
+int __wrap_main(int argc, char **argv)
 {
     _native_init_syscalls();
 
@@ -319,4 +319,6 @@ __attribute__((constructor)) static void startup(int argc, char **argv)
 
     puts("RIOT native hardware initialization complete.\n");
     kernel_init();
+
+    return 1;
 }

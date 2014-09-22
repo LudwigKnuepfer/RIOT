@@ -45,7 +45,11 @@
 
 volatile int lpm_prevent_sleep = 0;
 
+#ifdef BOARD_NATIVE
+extern int __real_main(void);
+#else
 extern int main(void);
+#endif
 static void *main_trampoline(void *arg)
 {
     (void) arg;
@@ -54,7 +58,11 @@ static void *main_trampoline(void *arg)
     auto_init();
 #endif
 
+#ifdef BOARD_NATIVE
+    __real_main();
+#else
     main();
+#endif
     return NULL;
 }
 
