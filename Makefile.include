@@ -200,7 +200,7 @@ clean:
 	@for i in $(USEPKG) ; do "$(MAKE)" -C $(RIOTBASE)/pkg/$$i clean || exit 1; done
 	rm -rf $(BINDIR) $(CLEANFILES)
 
-flash: ..test-hex
+flash: $(filter all all-%, $(MAKECMDGOALS)) ..test-hex
 	$(FLASHER) $(FFLAGS)
 
 term:
