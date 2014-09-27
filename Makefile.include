@@ -189,7 +189,7 @@ clean:
 	@for i in $(USEPKG) ; do "$(MAKE)" -C $(RIOTBASE)/pkg/$$i clean || exit 1; done
 	rm -rf $(BINDIR) $(CLEANFILES)
 
-flash: all
+flash:
 	$(FLASHER) $(FFLAGS)
 
 term:
