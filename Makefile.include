@@ -158,6 +158,17 @@ endif
 ..build-message:
 	@echo "Building application $(APPLICATION) for $(BOARD) w/ MCU $(MCU)."
 
+..test-hex:
+ifneq ($(HEXFILE),$(wildcard $(HEXFILE)))
+	@echo ""
+	@echo ""
+	@echo "You need to create a hex file before you can flash it."
+	@echo "Unless you know otherwise, 'make all' usually does what you want."
+	@echo ""
+	@echo ""
+	@exit 1
+endif
+
 # add extra include paths for packages in $(USEMODULE)
 export USEMODULE_INCLUDES =
 
@@ -189,7 +200,7 @@ clean:
 	@for i in $(USEPKG) ; do "$(MAKE)" -C $(RIOTBASE)/pkg/$$i clean || exit 1; done
 	rm -rf $(BINDIR) $(CLEANFILES)
 
-flash:
+flash: ..test-hex
 	$(FLASHER) $(FFLAGS)
 
 term:
