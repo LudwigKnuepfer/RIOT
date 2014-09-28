@@ -159,15 +159,15 @@ endif
 	@echo "Building application $(APPLICATION) for $(BOARD) w/ MCU $(MCU)."
 
 ..test-hex:
-ifneq ($(HEXFILE),$(wildcard $(HEXFILE)))
-	@echo ""
-	@echo ""
-	@echo "You need to create a hex file before you can flash it."
-	@echo "Unless you know otherwise, 'make all' usually does what you want."
-	@echo ""
-	@echo ""
-	@exit 1
-endif
+	@if [ ! -f $(HEXFILE) ]; then \
+		echo ""; \
+		echo ""; \
+		echo "You need to create a hex file before you can flash it."; \
+		echo "Unless you know otherwise, 'make all' usually does what you want."; \
+		echo ""; \
+		echo ""; \
+		exit 1; \
+	fi
 
 # add extra include paths for packages in $(USEMODULE)
 export USEMODULE_INCLUDES =
