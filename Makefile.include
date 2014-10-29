@@ -158,8 +158,8 @@ endif
 ..build-message:
 	@echo "Building application $(APPLICATION) for $(BOARD) w/ MCU $(MCU)."
 
-..test-hex:
-	@if [ ! -f $(HEXFILE) ]; then \
+..test-hex: $(filter all all-%, $(MAKECMDGOALS))
+	@if [ ! -f $${HEXFILE} ]; then \
 		echo ""; \
 		echo ""; \
 		echo "You need to create a hex file before you can flash it."; \
@@ -200,7 +200,7 @@ clean:
 	@for i in $(USEPKG) ; do "$(MAKE)" -C $(RIOTBASE)/pkg/$$i clean || exit 1; done
 	rm -rf $(BINDIR) $(CLEANFILES)
 
-flash: $(filter all all-%, $(MAKECMDGOALS)) ..test-hex
+flash: ..test-hex
 	$(FLASHER) $(FFLAGS)
 
 term:
