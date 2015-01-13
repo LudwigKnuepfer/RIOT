@@ -1,3 +1,88 @@
+/*
+ * Copyright (C) 2014 Cenk Gündoğan
+ * Copyright (C) 2014 Ludwig Ortmann
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @defgroup    mqttsn MQTT-SN - MQTT For Sensor Networks
+ * @ingroup     net
+ * @brief       MQTT-SN is an adaption of MQTT for sensor networks
+ *
+ * MQTT-SN caters to the needs of wireless sensor networks by reducing
+ * message sizes and implementation state size reduction.
+ *
+ * ## Gateway
+ * In order to connect to a regular MQTT broker, MQTT-SN needs a
+ * gateway which converts between MQTT-SN and MQTT message formats and
+ * saves some of the expensive state information.
+ * The Mosqitto project includes an implementation of such a gateway:
+ * http://www.eclipse.org/proposals/technology.mosquitto/
+ *
+ * ## Topic IDs
+ * With MQTT-SN, topic ids are used instead of topic strings for
+ * publish/subscribe messages. These topic ids can either be
+ * dynamically retrieved from the gateway, or they can be prearranged.
+ * In the latter case, the gateway would need to know the topic strings
+ * which are going to be used. The corresponding topic ids the MQTT-SN
+ * clients will use would need to be known at compile time, for example
+ * through a macro definition the application uses as a topic_id for
+ * publish/subscribe messages.
+ *
+ * ## MQTT-SN Specification
+ * This implementation is based on version 1.2 of the MQTT-SN
+ * specification:
+ * http://mqtt.org/new/wp-content/uploads/2009/06/MQTT-SN_spec_v1.2.pdf
+ *
+ * ## API Usage
+ * The workflow with this API is as follows:
+ * - create and initialize the mqtt handle
+ * @code
+ * mqttsn_state_t mqtt;
+ * if (mqttsn_init(&mqtt, ...) == -1) handle_error();
+ * @endcode
+ *
+ * - connect
+ * @code
+ * if (mqttsn_connect(&mqtt, ...) == -1) handle_error();
+ * @endcode
+ *
+ * - initialize a topic (optional)
+ * @code
+ * uint16_t topic_id;
+ * if (mqttsn_register_topic(&mqtt, "example/topic") == -1) handle_error();
+ * @endcode
+ *
+ * - subscribe to a topic... (optional)
+ * @code
+ * if (mqttsn_subscribe(&mqtt, topic_id) == -1) handle_error();
+ * @endcode
+ *
+ * - .. and/or publish to a topic (optional)
+ * @code
+ * if (mqttsn_publish(&mqtt, topic_id, ...) == -1) handle_error();
+ * @endcode
+ *
+ * - disconnect (optional)
+ * @code
+ * if (mqttsn_disconnect(mqtt) == -1) handle_error();
+ * @endcode
+ *
+ * @{
+ *
+ * @file
+ * @brief       MQTT-SN API declaration
+ *
+ * @author      Cenk Gündoğan <cnkgndgn@gmail.com>
+ * @author      Ludwig Ortmann <ludwig.ortmann@fu-berlin.de>
+ */
+
+#ifndef __MQTTSN_H
+#define __MQTTSN_H
+
 #include <inttypes.h>
 
 #include "msg.h"
@@ -45,12 +130,13 @@ typedef struct {
     int state;              /**< connected, ..? */
     uint16_t port;          /**< UDP port */
     ipv6_addr_t address;    /**< address */
+    int socket;             /**< socket, -1 if not connected */
     /**< topic_foo (support for several in parallel?) */
 } mqttsn_state_t;
 
 /**
  * @brief process a message from the network layer
- * 
+ *
  * @param[in]   mqtt        mqtt connection object
  * @param[in]   msg         the message
  */
@@ -109,3 +195,5 @@ int mqttsn_subscribe(mqttsn_state_t mqtt,
 int mqttsn_unsubscribe(
         uint16_t topic_id,
         );
+
+#endif __MQTTSN_H
