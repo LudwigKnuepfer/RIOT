@@ -1,6 +1,6 @@
 /*
- * Copyright (C) 2014 Cenk Gündoğan
- * Copyright (C) 2014 Ludwig Ortmann
+ * Copyright (C) 2015 Cenk Gündoğan
+ * Copyright (C) 2015 Ludwig Ortmann
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
