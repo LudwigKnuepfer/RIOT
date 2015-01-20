@@ -45,7 +45,7 @@
  * if (mqttsn_init(&mqtt, ...) == -1) handle_error();
  * @endcode
  *
- * - connect
+ * - connect (optional)
  * @code
  * if (mqttsn_connect(&mqtt, ...) == -1) handle_error();
  * @endcode
@@ -56,19 +56,55 @@
  * if (mqttsn_register_topic(&mqtt, "example/topic") == -1) handle_error();
  * @endcode
  *
- * - subscribe to a topic... (optional)
+ * - disconnect (optional)
+ * @code
+ * if (mqttsn_disconnect(mqtt) == -1) handle_error();
+ * @endcode
+ *
+ * ### Consumer
+ * - subscribe to a topic
  * @code
  * if (mqttsn_subscribe(&mqtt, topic_id) == -1) handle_error();
  * @endcode
  *
- * - .. and/or publish to a topic (optional)
+ * - listen for publishes
  * @code
- * if (mqttsn_publish(&mqtt, topic_id, ...) == -1) handle_error();
+ * while (mqttsn_recv(&mqtt, &mqttsn_msg) != -1) {
+ *     switch (mqttsn_msg.topic_id) {
+ *         case (MQTTSN_TOPIC_LIGHTS_OUT):
+ *             handle_lights_out();
+ *             break;
+ *         case (MQTTSN_TOPIC_LIGHTS_ON):
+ *             handle_lights_on();
+ *             break;
+ *         default:
+ *             break;
+ *     }
+ * }
  * @endcode
  *
- * - disconnect (optional)
+ * ### Producer
+ * - publish to a topic
  * @code
- * if (mqttsn_disconnect(mqtt) == -1) handle_error();
+ * while (msg_receive(&msg)) {
+ *     mqttsn_msg_t mqttsn_msg;
+ *     switch (msg.type) {
+ *         case (SENSOR_STATUS_HI):
+ *             mqttsn_msg.topic_id = MQTTSN_TOPIC_SENSOR_HI;
+ *             if (mqttsn_publish(&mqtt, &mqttsn_msg) == -1) {
+ *                 handle_error();
+ *             }
+ *             break;
+ *         case (SENSOR_STATUS_LOW):
+ *             mqttsn_msg.topic_id = MQTTSN_TOPIC_SENSOR_LOW;
+ *             if (mqttsn_publish(&mqtt, &mqttsn_msg) == -1) {
+ *                 handle_error();
+ *             }
+ *             break;
+ *         default:
+ *             break;
+ *     }
+ * }
  * @endcode
  *
  * @{
