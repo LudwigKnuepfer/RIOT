@@ -147,7 +147,7 @@ static void shell_putchar(int c)
     (void) putchar(c);
 }
 
-int main(void)
+int main_thread(void)
 {
     shell_t shell;
     (void) posix_open(uart0_handler_pid, 0);

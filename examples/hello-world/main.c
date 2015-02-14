@@ -21,7 +21,7 @@
 
 #include <stdio.h>
 
-int main(void)
+int main_thread(void)
 {
     puts("Hello World!");
 

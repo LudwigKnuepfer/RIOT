@@ -1,5 +1,7 @@
 # name of your application
 APPLICATION = hello-world
+THREAD1 = main_thread
+THREAD1_NAME = main
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= native
