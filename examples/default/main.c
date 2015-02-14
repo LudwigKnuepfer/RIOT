@@ -26,6 +26,7 @@
 #include <string.h>
 
 #include "thread.h"
+#include "auto_init.h"
 #include "posix_io.h"
 #include "shell.h"
 #include "shell_commands.h"
@@ -47,11 +48,13 @@
 #include "transceiver.h"
 #endif
 
+static char main_stack[KERNEL_CONF_STACKSIZE_MAIN];
+
+#ifdef MODULE_TRANSCEIVER
+
 #define SND_BUFFER_SIZE     (100)
 #define RCV_BUFFER_SIZE     (64)
 #define RADIO_STACK_SIZE    (KERNEL_CONF_STACKSIZE_DEFAULT)
-
-#ifdef MODULE_TRANSCEIVER
 
 static char radio_stack_buffer[RADIO_STACK_SIZE];
 static msg_t msg_q[RCV_BUFFER_SIZE];
@@ -147,8 +150,14 @@ static void shell_putchar(int c)
     (void) putchar(c);
 }
 
-int main(void)
+void* main_thread(void* arg)
 {
+    (void) arg;
+
+#ifdef MODULE_AUTO_INIT
+    auto_init();
+#endif
+
     shell_t shell;
     (void) posix_open(uart0_handler_pid, 0);
 
@@ -170,4 +179,11 @@ int main(void)
 
     shell_run(&shell);
     return 0;
+}
+
+void application_init(void)
+{
+    if (thread_create(main_stack, sizeof(main_stack), PRIORITY_MAIN, CREATE_WOUT_YIELD | CREATE_STACKTEST, main_thread, NULL, "main") < 0) {
+        printf("application_init(): error creating thread.\n");
+    }
 }
