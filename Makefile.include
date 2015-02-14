@@ -111,6 +111,12 @@ CFLAGS += -DBOARD_$(BOARDDEF)=\"$(BOARD)\" -DRIOT_BOARD=BOARD_$(BOARDDEF)
 CFLAGS += -DCPU_$(CPUDEF)=\"$(CPU)\" -DRIOT_CPU=CPU_$(CPUDEF)
 CFLAGS += -DMCU_$(MCUDEF)=\"$(MCU)\" -DRIOT_MCU=MCU_$(MCUDEF)
 
+# define initial thread
+ifneq (,$(THREAD1))
+	CFLAGS += -DAPPLICATION_THREAD=$(THREAD1)
+endif
+CFLAGS += -DAPPLICATION_NAME=\"$(THREAD1_NAME)\"
+
 # OSX fails to create empty archives. Provide a wrapper to catch that error.
 ifneq (0, $(shell mkdir -p $(BINDIR); $(AR) rc $(BINDIR)empty-archive.a 2> /dev/null; echo $$?))
 	AR := $(RIOTBASE)/dist/ar-wrapper $(AR)

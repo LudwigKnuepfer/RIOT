@@ -14,6 +14,7 @@
  * @brief       Platform-independent kernel initilization
  *
  * @author      Kaspar Schleiser <kaspar@schleiser.de>
+ * @author      Ludwig Ortmann <ludwig.ortmann@fu-berlin.de>
  *
  * @}
  */
@@ -42,7 +43,10 @@
 
 volatile int lpm_prevent_sleep = 0;
 
-extern int main(void);
+#ifdef APPLICATION_THREAD
+extern int APPLICATION_THREAD(void);
+#endif
+
 static void *main_trampoline(void *arg)
 {
     (void) arg;
@@ -51,7 +55,17 @@ static void *main_trampoline(void *arg)
     auto_init();
 #endif
 
-    main();
+/* start application if defined */
+#ifdef APPLICATION_THREAD
+    APPLICATION_THREAD();
+#else
+#ifdef DEVELHELP
+    printf("no application defined\n");
+#else
+    DEBUG("no application defined\n");
+#endif
+#endif
+
     return NULL;
 }
 
@@ -73,7 +87,7 @@ static void *idle_thread(void *arg)
     return NULL;
 }
 
-const char *main_name = "main";
+const char *main_name = APPLICATION_NAME;
 const char *idle_name = "idle";
 
 static char main_stack[KERNEL_CONF_STACKSIZE_MAIN];
