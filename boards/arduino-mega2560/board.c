@@ -53,6 +53,15 @@ static FILE uart_stdin = FDEV_SETUP_STREAM(NULL, uart_getchar, _FDEV_SETUP_READ)
 
 
 /**
+ * TODO: find out why/if this is needed, and what it does
+ */
+int main(void)
+{
+    return -1;
+}
+
+
+/**
  * @brief Receive a new character from the UART and put it into the receive
  * buffer
  *
