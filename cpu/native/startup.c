@@ -219,7 +219,7 @@ The order of command line arguments matters.\n");
 
 }
 
-__attribute__((constructor)) static void startup(int argc, char **argv)
+int main(int argc, char **argv)
 {
     _native_init_syscalls();
 
