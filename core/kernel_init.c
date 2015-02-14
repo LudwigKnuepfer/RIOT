@@ -42,18 +42,7 @@
 
 volatile int lpm_prevent_sleep = 0;
 
-extern int main(void);
-static void *main_trampoline(void *arg)
-{
-    (void) arg;
-
-#ifdef MODULE_AUTO_INIT
-    auto_init();
-#endif
-
-    main();
-    return NULL;
-}
+extern void application_init(void);
 
 static void *idle_thread(void *arg)
 {
@@ -73,10 +62,8 @@ static void *idle_thread(void *arg)
     return NULL;
 }
 
-const char *main_name = "main";
 const char *idle_name = "idle";
 
-static char main_stack[KERNEL_CONF_STACKSIZE_MAIN];
 static char idle_stack[KERNEL_CONF_STACKSIZE_IDLE];
 
 void kernel_init(void)
@@ -90,9 +77,7 @@ void kernel_init(void)
         printf("kernel_init(): error creating idle task.\n");
     }
 
-    if (thread_create(main_stack, sizeof(main_stack), PRIORITY_MAIN, CREATE_WOUT_YIELD | CREATE_STACKTEST, main_trampoline, NULL, main_name) < 0) {
-        printf("kernel_init(): error creating main task.\n");
-    }
+    application_init();
 
     printf("kernel_init(): jumping into first task...\n");
 
