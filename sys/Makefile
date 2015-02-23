@@ -1,3 +1,6 @@
+ifneq (,$(filter log_null,$(USEMODULE)))
+	DIRS += log/log_null
+endif
 ifneq (,$(filter pnet,$(USEMODULE)))
     DIRS += posix/pnet
 endif
