@@ -12,27 +12,38 @@
  * @{
  *
  * @file
- * @brief       logging implementation that does nothing
+ * @brief       logging implementation that only prints the first argument
  *
  * @author      Ludwig Ortmann <ludwig.ortmann@fu-berlin.de>
  *
  * @}
  */
 
+#include <stdio.h>
+#include <stdarg.h>
 
 #include "log.h"
 
 void log_info(const char *format, ...)
 {
-    (void) format;
+    putchar('I');
+    putchar(':');
+    putchar(' ');
+    puts(format);
 }
 
 void log_warning(const char *format, ...)
 {
-    (void) format;
+    putchar('W');
+    putchar(':');
+    putchar(' ');
+    puts(format);
 }
 
 void log_error(const char *format, ...)
 {
-    (void) format;
+    putchar('E');
+    putchar(':');
+    putchar(' ');
+    puts(format);
 }
