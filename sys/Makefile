@@ -1,5 +1,6 @@
 ifneq (,$(filter log_null,$(USEMODULE)))
 	DIRS += log/log_null
+	DISABLE_MODULE += log_printf
 endif
 ifneq (,$(filter log_printf,$(USEMODULE)))
 	DIRS += log/log_printf
