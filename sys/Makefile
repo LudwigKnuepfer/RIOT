@@ -5,6 +5,9 @@ endif
 ifneq (,$(filter log_printf,$(USEMODULE)))
 	DIRS += log/log_printf
 endif
+ifneq (,$(filter log_printfnoformat,$(USEMODULE)))
+	DIRS += log/log_printfnoformat
+endif
 ifneq (,$(filter pnet,$(USEMODULE)))
     DIRS += posix/pnet
 endif
