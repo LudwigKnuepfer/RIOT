@@ -29,6 +29,14 @@
  * - LOG_DISCARD_WARNING
  * - LOG_DISCARD_ERROR
  *
+ * All modules must prepend a severity level indicator to messages, so log
+ * readers may differentiate between them.
+ * The prefix is a single capital letter for the severity level followed by
+ * a colon and a space character:
+ * - info messages will be prefixed "I: "
+ * - warning messages will be prefixed "W: "
+ * - error messages will be prefixed "E: "
+ *
  * @{
  *
  * @file
