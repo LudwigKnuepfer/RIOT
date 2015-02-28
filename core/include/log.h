@@ -11,23 +11,47 @@
  * @ingroup     core
  * @brief       Logging API
  *
- * The logging API can be implemented by several modules. Applications must
+ * ## Logging Modules
+ *
+ * The logging API can be implemented by several modules. Applications can
  * choose a module that best suits their purpose.
+ *
+ * If no module is selected explicitely, the built-in default
+ * "log_printf" is used. It is a macro based implementation which
+ * replaces logging calls with printf expressions.
+ *
+ * ## Severity Levels
+ *
  * To differentiate between importance of log messages, there are three
  * severity levels:
  * - info
  * - warning
  * - error
  *
+ * ### Disabling Severity Levels
+ *
  * Logging implementations may be configured to discard log messages of any
  * kind.
- * To save memory, implementations are also free to only process the first
- * parameter.
  *
  * To discard logging levels explicitly, three macros may be set to `1`:
  * - LOG_DISCARD_INFO
  * - LOG_DISCARD_WARNING
  * - LOG_DISCARD_ERROR
+ *
+ * ## Implementation Details
+ *
+ * To save memory, implementations are free to only process the first
+ * parameter.
+ *
+ * Implementations are not required to process every log message. 
+ * A networked remote logging implementation for example could decide
+ * not to buffer messages that are logged while the network connection
+ * is unavailable.
+ *
+ * All implementations are required to document how they process
+ * messages if they deviate from expected behavior.
+ *
+ * ## Message Formatting
  *
  * All modules must prepend a severity level indicator to messages, so log
  * readers may differentiate between them.
