@@ -16,7 +16,7 @@
  * The logging API can be implemented by several modules. Applications can
  * choose a module that best suits their purpose.
  *
- * If no module is selected explicitely, the built-in default
+ * If no module is selected explicitly, the built-in default
  * "log_printf" is used. It is a macro based implementation which
  * replaces logging calls with printf expressions.
  *
