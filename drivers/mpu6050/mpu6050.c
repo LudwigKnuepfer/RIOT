@@ -502,8 +502,8 @@ static int mpu6050_activate_int(mpu6050_t *dev)
     /*
      * (iv)  Set STBY_XG, STBY_YG, STBY_ZG bits to 1
      */
-    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_PWR_MGMT_2_REG,
-            BIT_PWR_MGMT_2_G_DIS_A_EN | MPU6050_LP_WAKEUP_125mHZ);
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_PWR_MGMT_2_REG, 0x07);
+            //BIT_PWR_MGMT_2_G_DIS_A_EN | MPU6050_LP_WAKEUP_125mHZ);
 
     /*
      * Enable motion interrupt:
@@ -511,15 +511,14 @@ static int mpu6050_activate_int(mpu6050_t *dev)
     i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_INT_ENABLE_REG, BIT_MOT_EN);
 
     char val;
-#if 0
+
     /*
-     * Enable accel Hardware Intelligence:
+     * Enable Accelerometer Hardware Intelligence:
      * In MOT_DETECT_CTRL (0x69), set ACCEL_INTEL_EN = 1 and ACCEL_INTEL_MODE = 1
      * mask: 11?? ????
      */
     val = 0xC0;
     i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_MOT_DETECT_CTRL_REG, val);
-#endif
 
     /*
      * Set Motion Threshold:
@@ -528,17 +527,6 @@ static int mpu6050_activate_int(mpu6050_t *dev)
      */
     val = 0x05; /* TODO: find sane value */
     i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_WOM_THR_REG, val);
-
-#if 0
-    /*
-     * Enable Cycle Mode (Accel Low Power Mode):
-     * In PWR_MGMT_1 (0x6B) make CYCLE = 1
-     *
-     * mask: 0010 ????
-     */
-    val = 0x20;
-    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_PWR_MGMT_1_REG, val);
-#endif
 
     /* release device */
     i2c_release(dev->i2c_dev);

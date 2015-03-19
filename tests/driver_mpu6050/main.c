@@ -84,13 +84,13 @@ int main(void)
         puts("[Error] The given i2c is not enabled");
         return 1;
     }
-
+#if 1
    thread_create(
            mpu_handler_stack, sizeof(mpu_handler_stack), PRIORITY_MAIN - 1,
            CREATE_WOUT_YIELD | CREATE_STACKTEST,
            mpu_handler, NULL, "mpu_handler");
 
-#if 0
+#else
     mpu6050_set_sample_rate(&dev, 200);
     if (dev.conf.sample_rate != 200) {
         puts("[Error] The sample rate was not set correctly");
