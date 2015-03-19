@@ -5,6 +5,7 @@ include ../Makefile.tests_common
 ifneq (,$(filter samr21-xpro,$(BOARD)))
   export TEST_I2C ?= I2C_0
   export TEST_HW_ADDR ?= MPU6050_HW_ADDR_HEX_68
+  export TEST_GPIO ?= GPIO_0
 endif
 
 FEATURES_REQUIRED = periph_i2c periph_gpio
@@ -23,6 +24,12 @@ ifneq (,$(TEST_HW_ADDR))
 else
   # set random default
   CFLAGS += -DTEST_HW_ADDR=MPU6050_HW_ADDR_HEX_68
+endif
+ifneq (,$(TEST_GPIO))
+  CFLAGS += -DTEST_GPIO=$(TEST_GPIO)
+else
+  # set random default
+  CFLAGS += -DTEST_GPIO=GPIO_0
 endif
 
 include $(RIOTBASE)/Makefile.include

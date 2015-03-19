@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 airfy GmbH
+ * Copyright (C) 2015 Freie Universität Berlin
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -13,6 +13,7 @@
  * @file
  * @brief   Test application for the MPU-6050 6-Axis driver
  *
+ * @author  Fabian Nack <nack@inf.fu-berlin.de>
  * @author  Ludwig Ortmann <ludwig@airfy.com>
  *
  * @}
@@ -23,6 +24,9 @@
 #endif
 #ifndef TEST_HW_ADDR
 #error "TEST_HW_ADDR not defined"
+#endif
+#ifndef TEST_GPIO
+#error "TEST_GPIO not defined"
 #endif
 
 #include <stdio.h>
@@ -45,7 +49,7 @@ int main(void)
     vtimer_init();
 
     printf("+------------Initializing------------+\n");
-    result = mpu6050_init(&dev, TEST_I2C, TEST_HW_ADDR);
+    result = mpu6050_init(&dev, TEST_I2C, TEST_HW_ADDR, TEST_GPIO);
 
     if (result == -1) {
         puts("[Error] The given i2c is not enabled");

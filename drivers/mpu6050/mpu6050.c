@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 airfy GmbH
+ * Copyright (C) 2015 Freie Universität Berlin
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -13,15 +13,20 @@
  * @file
  * @brief   Device driver implementation for the MPU-6050
  *
- * @author  Ludwig Ortmann <ludwig@airfy.com>
+ * @author  Fabian Nack <nack@inf.fu-berlin.de>
+ * @author  Ludwig Ortmann <ludwig.ortmann@fu-berlin.de>
  *
  * @}
  */
 
+#include "periph/i2c.h"
+#include "periph/gpio.h"
+#include "hwtimer.h"
+#include "msg.h"
+#include "thread.h"
+
 #include "mpu6050.h"
 #include "mpu6050-regs.h"
-#include "periph/i2c.h"
-#include "hwtimer.h"
 
 #define ENABLE_DEBUG        (0)
 #include "debug.h"
@@ -42,18 +47,22 @@ static const mpu6050_status_t DEFAULT_STATUS = {
  * internal API declaration
  **********************************************************************/
 static void conf_lpf(mpu6050_t *dev, uint16_t rate);
+static void mpu6050_irq_handler(void *arg);
+static void mpu6050_send_msg(mpu6050_t *dev);
+static int mpu6050_activate_int(mpu6050_t *dev);
 
 /**********************************************************************
  * public API implementation
  **********************************************************************/
 
-int mpu6050_init(mpu6050_t *dev, i2c_t i2c, mpu6050_hw_addr_t hw_addr)
+int mpu6050_init(mpu6050_t *dev, i2c_t i2c, mpu6050_hw_addr_t hw_addr, gpio_t gpio)
 {
     char temp;
 
     dev->i2c_dev = i2c;
     dev->hw_addr = hw_addr;
     dev->conf = DEFAULT_STATUS;
+    dev->gpio_dev = gpio;
 
     /* Initialize I2C interface */
     if (i2c_init_master(dev->i2c_dev, I2C_SPEED_FAST)) {
@@ -91,6 +100,30 @@ int mpu6050_init(mpu6050_t *dev, i2c_t i2c, mpu6050_hw_addr_t hw_addr)
     i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_PWR_MGMT_2_REG, temp);
     i2c_release(dev->i2c_dev);
     hwtimer_wait(HWTIMER_TICKS(MPU6050_PWR_CHANGE_SLEEP_US));
+
+    /* Initialize GPIO interface */
+    gpio_init_int(dev->gpio_dev, GPIO_NOPULL, GPIO_RISING, mpu6050_irq_handler, NULL);
+
+    return 0;
+}
+
+int mpu6050_register_thread(mpu6050_t *dev)
+{
+    if (dev->msg_thread_pid != KERNEL_PID_UNDEF) {
+        if (dev->msg_thread_pid != thread_getpid()) {
+            DEBUG("mpu6050_register_thread: already registered to another thread\n");
+            return -2;
+        }
+    }
+    else {
+        DEBUG("mpu6050_register_thread: activating interrupt for %p..\n", dev);
+        if (mpu6050_activate_int(dev) != 0) {
+            DEBUG("\tfailed\n");
+            return -1;
+        }
+        DEBUG("\tsuccess\n");
+    }
+    dev->msg_thread_pid = thread_getpid();
 
     return 0;
 }
@@ -399,4 +432,48 @@ static void conf_lpf(mpu6050_t *dev, uint16_t half_rate)
 
     /* Write LPF setting to configuration register */
     i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_LPF_REG, (char)lpf_setting);
+}
+
+/**
+ * @brief send message to interested thread
+ */
+static void mpu6050_send_msg(mpu6050_t *dev)
+{
+    DEBUG("mpu6050_send_msg\n");
+    msg_t m = { .type = MPU6050_MSG_INT, .content.ptr = (char*) dev, };
+
+    int ret = msg_send_int(&m, dev->msg_thread_pid);
+    DEBUG("mpu6050_send_msg: msg_send_int: %i\n", ret);
+    switch (ret) {
+        case 0:
+            DEBUG("mpu6050_send_msg: msg_thread_pid not receptive, event is lost");
+            break;
+
+        case 1:
+            DEBUG("mpu6050_send_msg: OK");
+            break;
+
+        case -1:
+            DEBUG("mpu6050_send_msg: msg_thread_pid is gone, clearing it");
+            dev->msg_thread_pid = KERNEL_PID_UNDEF;
+            break;
+    }
+}
+
+/**
+ * @brief mpu6050 interrupt handler
+ */
+static void mpu6050_irq_handler(void *arg)
+{
+    DEBUG("mpu6050_irq_handler: %p\n", arg);
+    mpu6050_t *dev = (mpu6050_t*) arg;
+    if (dev->msg_thread_pid != KERNEL_PID_UNDEF) {
+        mpu6050_send_msg(dev);
+    }
+}
+
+static int mpu6050_activate_int(mpu6050_t *dev)
+{
+    /* TODO */
+    return -1;
 }

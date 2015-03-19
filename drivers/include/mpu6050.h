@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2015 airfy GmbH
+ * Copyright (C) 2015 Freie Universität Berlin
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -18,19 +18,34 @@
  * @{
  *
  * @file
- * @brief       Device driver interface for the MPU-6050
+ * @brief   Device driver interface for the MPU-6050
  *
- * @author      Ludwig Ortmann <ludwig@airfy.com>
+ * @author  Fabian Nack <nack@inf.fu-berlin.de>
+ * @author  Ludwig Ortmann <ludwig@airfy.com>
  */
 
 #ifndef MPU6050_H_
 #define MPU6050_H_
 
 #include "periph/i2c.h"
+#include "periph/gpio.h"
+#include "msg.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
+/**
+ * @name Message type definitions
+ * @{
+ */
+#ifndef MPU6050_MSG_START
+#define MPU6050_MSG_START 160
+#endif
+
+#define MPU6050_MSG_INT             (MPU6050_MSG_START + 0)
+/** @} */
 
 /**
  * @name Sample rate macro definitions
@@ -139,9 +154,11 @@ typedef struct {
  * @brief Device descriptor for the MPU-6050 sensor
  */
 typedef struct {
-    i2c_t i2c_dev;              /**< I2C device which is used */
-    uint8_t hw_addr;            /**< Hardware address of the MPU-6050 */
-    mpu6050_status_t conf;      /**< Device configuration */
+    i2c_t i2c_dev;                  /**< I2C device which is used */
+    gpio_t gpio_dev;                /**< GPIO device which is used */
+    uint8_t hw_addr;                /**< Hardware address of the MPU-6050 */
+    kernel_pid_t msg_thread_pid;    /**< thread to msg on interrupt */
+    mpu6050_status_t conf;          /**< Device configuration */
 } mpu6050_t;
 
 /**
@@ -150,11 +167,28 @@ typedef struct {
  * @param[out] dev          Initialized device descriptor of MPU6050 device
  * @param[in]  i2c          I2C bus the sensor is connected to
  * @param[in]  hw_addr      The device's address on the I2C bus
+ * @param[in]  gpio         GPIO device the sensors interrupt pin is
+ *                          connected to
  *
  * @return                  0 on success
  * @return                  -1 if given I2C is not enabled in board config
  */
-int mpu6050_init(mpu6050_t *dev, i2c_t i2c, mpu6050_hw_addr_t hw_addr);
+int mpu6050_init(mpu6050_t *dev, i2c_t i2c, mpu6050_hw_addr_t hw_addr, gpio_t gpio);
+
+/**
+ * @brief   register a thread for notification when motion is detected
+ *
+ * @note
+ * This configures the gpio device for interrupt driven operation
+ *
+ * @param[in] dev       device descriptor of the motion sensor to register
+ *                      for
+ *
+ * @return              0 on succuess,
+ * @return              -1 on internal errors,
+ * @return              -2 if another thread is registered already
+ */
+int mpu6050_register_thread(mpu6050_t *dev);
 
 /**
  * @brief Enable or disable accelerometer power
