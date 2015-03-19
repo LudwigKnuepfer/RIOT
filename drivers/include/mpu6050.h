@@ -131,6 +131,16 @@ typedef enum {
 } mpu6050_lpf_t;
 
 /**
+ * @brief Possible low power wakeup values
+ */
+typedef enum {
+    MPU6050_LP_WAKEUP_125mHZ    = 0x00,
+    MPU6050_LP_WAKEUP_5HZ       = 0x40,
+    MPU6050_LP_WAKEUP_20HZ      = 0x80,
+    MPU6050_LP_WAKEUP_40HZ      = 0xC0,
+} mpu6050_lp_wakeup_t;
+
+/**
  * @brief MPU-6050 result vector struct
  */
 typedef struct {

@@ -34,6 +34,7 @@
 #define MPU6050_LPF_REG                 (0x1A)
 #define MPU6050_GYRO_CFG_REG            (0x1B)
 #define MPU6050_ACCEL_CFG_REG           (0x1C)
+#define MPU6050_WOM_THR_REG             (0x1F)
 #define MPU6050_FIFO_EN_REG             (0x23)
 #define MPU6050_I2C_MST_REG             (0x24)
 #define MPU6050_SLAVE0_ADDR_REG         (0x25)
@@ -56,6 +57,7 @@
 #define MPU6050_SLAVE2_DATA_OUT_REG     (0x65)
 #define MPU6050_SLAVE3_DATA_OUT_REG     (0x66)
 #define MPU6050_I2C_DELAY_CTRL_REG      (0x67)
+#define MPU6050_MOT_DETECT_CTRL_REG     (0x69)
 #define MPU6050_USER_CTRL_REG           (0x6A)
 #define MPU6050_PWR_MGMT_1_REG          (0x6B)
 #define MPU6050_PWR_MGMT_2_REG          (0x6C)
@@ -72,12 +74,16 @@
 #define BIT_SLV1_DELAY_EN               (0x02)
 #define BIT_I2C_BYPASS_EN               (0x02)
 #define BIT_I2C_MST_EN                  (0x20)
-#define BIT_PWR_MGMT1_SLEEP             (0x40)
+#define BIT_PWR_MGMT_1_SLEEP            (0x40)
+#define BIT_PWR_MGMT_1_LPM              (0x28)
+#define BIT_PWR_MGMT_2_G_DIS_A_EN       (0x07)
 #define BIT_WAIT_FOR_ES                 (0x40)
 #define BIT_I2C_MST_VDDIO               (0x80)
 #define BIT_SLAVE_RW                    (0x80)
 #define BIT_SLAVE_EN                    (0x80)
 #define BIT_DMP_EN                      (0x80)
+#define BIT_MOT_EN                      (0x40)
+#define BIT_INT_PIN_CFG                 (0xB0)
 /** @} */
 
 #ifdef __cplusplus

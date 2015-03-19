@@ -63,6 +63,7 @@ int mpu6050_init(mpu6050_t *dev, i2c_t i2c, mpu6050_hw_addr_t hw_addr, gpio_t gp
     dev->hw_addr = hw_addr;
     dev->conf = DEFAULT_STATUS;
     dev->gpio_dev = gpio;
+    dev->msg_thread_pid = KERNEL_PID_UNDEF;
 
     /* Initialize I2C interface */
     if (i2c_init_master(dev->i2c_dev, I2C_SPEED_FAST)) {
@@ -102,13 +103,14 @@ int mpu6050_init(mpu6050_t *dev, i2c_t i2c, mpu6050_hw_addr_t hw_addr, gpio_t gp
     hwtimer_wait(HWTIMER_TICKS(MPU6050_PWR_CHANGE_SLEEP_US));
 
     /* Initialize GPIO interface */
-    gpio_init_int(dev->gpio_dev, GPIO_NOPULL, GPIO_RISING, mpu6050_irq_handler, NULL);
+    gpio_init_int(dev->gpio_dev, GPIO_NOPULL, GPIO_RISING, mpu6050_irq_handler, dev);
 
     return 0;
 }
 
 int mpu6050_register_thread(mpu6050_t *dev)
 {
+    dev->msg_thread_pid = thread_getpid();
     if (dev->msg_thread_pid != KERNEL_PID_UNDEF) {
         if (dev->msg_thread_pid != thread_getpid()) {
             DEBUG("mpu6050_register_thread: already registered to another thread\n");
@@ -123,7 +125,6 @@ int mpu6050_register_thread(mpu6050_t *dev)
         }
         DEBUG("\tsuccess\n");
     }
-    dev->msg_thread_pid = thread_getpid();
 
     return 0;
 }
@@ -188,7 +189,7 @@ int mpu6050_set_gyro_power(mpu6050_t *dev, mpu6050_pwr_t pwr_conf)
         if (dev->conf.accel_pwr == MPU6050_SENSOR_PWR_OFF) {
             /* All sensors turned off, put the MPU-6050 to sleep */
             i2c_write_reg(dev->i2c_dev, dev->hw_addr,
-                    MPU6050_PWR_MGMT_1_REG, BIT_PWR_MGMT1_SLEEP);
+                    MPU6050_PWR_MGMT_1_REG, BIT_PWR_MGMT_1_SLEEP);
         }
         else {
             /* Reset clock to internal oscillator */
@@ -446,15 +447,15 @@ static void mpu6050_send_msg(mpu6050_t *dev)
     DEBUG("mpu6050_send_msg: msg_send_int: %i\n", ret);
     switch (ret) {
         case 0:
-            DEBUG("mpu6050_send_msg: msg_thread_pid not receptive, event is lost");
+            DEBUG("mpu6050_send_msg: msg_thread_pid not receptive, event is lost\n");
             break;
 
         case 1:
-            DEBUG("mpu6050_send_msg: OK");
+            DEBUG("mpu6050_send_msg: OK\n");
             break;
 
         case -1:
-            DEBUG("mpu6050_send_msg: msg_thread_pid is gone, clearing it");
+            DEBUG("mpu6050_send_msg: msg_thread_pid is gone, clearing it\n");
             dev->msg_thread_pid = KERNEL_PID_UNDEF;
             break;
     }
@@ -467,6 +468,11 @@ static void mpu6050_irq_handler(void *arg)
 {
     DEBUG("mpu6050_irq_handler: %p\n", arg);
     mpu6050_t *dev = (mpu6050_t*) arg;
+
+    /* read to clear */
+    char status;
+    i2c_read_reg(dev->i2c_dev, dev->hw_addr, MPU6050_INT_STATUS, &status);
+
     if (dev->msg_thread_pid != KERNEL_PID_UNDEF) {
         mpu6050_send_msg(dev);
     }
@@ -474,6 +480,68 @@ static void mpu6050_irq_handler(void *arg)
 
 static int mpu6050_activate_int(mpu6050_t *dev)
 {
-    /* TODO */
-    return -1;
+    /* lock device */
+    i2c_acquire(dev->i2c_dev);
+
+    /* Configure PIN */
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_INT_PIN_CFG_REG, BIT_INT_PIN_CFG);
+
+    /* Reset */
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_PWR_MGMT_1_REG, REG_RESET);
+
+    /*
+     * The MPU-60X0 can be put into Accelerometer Only Low Power Mode using
+     * the following steps:
+     * (i)   Set CYCLE bit to 1
+     * (ii)  Set SLEEP bit to 0
+     * (iii) Set TEMP_DIS bit to 1
+     */
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_PWR_MGMT_1_REG, BIT_PWR_MGMT_1_LPM);
+
+
+    /*
+     * (iv)  Set STBY_XG, STBY_YG, STBY_ZG bits to 1
+     */
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_PWR_MGMT_2_REG,
+            BIT_PWR_MGMT_2_G_DIS_A_EN | MPU6050_LP_WAKEUP_125mHZ);
+
+    /*
+     * Enable motion interrupt:
+     */
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_INT_ENABLE_REG, BIT_MOT_EN);
+
+    char val;
+#if 0
+    /*
+     * Enable accel Hardware Intelligence:
+     * In MOT_DETECT_CTRL (0x69), set ACCEL_INTEL_EN = 1 and ACCEL_INTEL_MODE = 1
+     * mask: 11?? ????
+     */
+    val = 0xC0;
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_MOT_DETECT_CTRL_REG, val);
+#endif
+
+    /*
+     * Set Motion Threshold:
+     * In WOM_THR (0x1F), set the WOM_Threshold [7:0] to 1~255 LSBs
+     * (0~1020mg)
+     */
+    val = 0x05; /* TODO: find sane value */
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_WOM_THR_REG, val);
+
+#if 0
+    /*
+     * Enable Cycle Mode (Accel Low Power Mode):
+     * In PWR_MGMT_1 (0x6B) make CYCLE = 1
+     *
+     * mask: 0010 ????
+     */
+    val = 0x20;
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_PWR_MGMT_1_REG, val);
+#endif
+
+    /* release device */
+    i2c_release(dev->i2c_dev);
+
+    return 0;
 }
