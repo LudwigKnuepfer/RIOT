@@ -83,7 +83,7 @@
 #define BIT_SLAVE_EN                    (0x80)
 #define BIT_DMP_EN                      (0x80)
 #define BIT_MOT_EN                      (0x40)
-#define BIT_INT_PIN_CFG                 (0xB0)
+#define BIT_INT_PIN_CFG                 (0x30)
 /** @} */
 
 #ifdef __cplusplus

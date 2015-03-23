@@ -483,11 +483,12 @@ static int mpu6050_activate_int(mpu6050_t *dev)
     /* lock device */
     i2c_acquire(dev->i2c_dev);
 
-    /* Configure PIN */
-    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_INT_PIN_CFG_REG, BIT_INT_PIN_CFG);
-
     /* Reset */
     i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_PWR_MGMT_1_REG, REG_RESET);
+    hwtimer_wait(HWTIMER_TICKS(MPU6050_RESET_SLEEP_US));
+
+    /* Configure PIN */
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_INT_PIN_CFG_REG, BIT_INT_PIN_CFG);
 
     /*
      * The MPU-60X0 can be put into Accelerometer Only Low Power Mode using
@@ -498,7 +499,6 @@ static int mpu6050_activate_int(mpu6050_t *dev)
      */
     i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_PWR_MGMT_1_REG, BIT_PWR_MGMT_1_LPM);
 
-
     /*
      * (iv)  Set STBY_XG, STBY_YG, STBY_ZG bits to 1
      */
@@ -508,7 +508,7 @@ static int mpu6050_activate_int(mpu6050_t *dev)
     /*
      * Enable motion interrupt:
      */
-    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_INT_ENABLE_REG, BIT_MOT_EN);
+    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_INT_ENABLE_REG, 0x00);
 
     char val;
 
@@ -517,16 +517,16 @@ static int mpu6050_activate_int(mpu6050_t *dev)
      * In MOT_DETECT_CTRL (0x69), set ACCEL_INTEL_EN = 1 and ACCEL_INTEL_MODE = 1
      * mask: 11?? ????
      */
-    val = 0xC0;
-    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_MOT_DETECT_CTRL_REG, val);
+    //val = 0xC0;
+    //i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_MOT_DETECT_CTRL_REG, val);
 
     /*
      * Set Motion Threshold:
      * In WOM_THR (0x1F), set the WOM_Threshold [7:0] to 1~255 LSBs
      * (0~1020mg)
      */
-    val = 0x05; /* TODO: find sane value */
-    i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_WOM_THR_REG, val);
+    //val = 0x05; /* TODO: find sane value */
+    //i2c_write_reg(dev->i2c_dev, dev->hw_addr, MPU6050_WOM_THR_REG, val);
 
     /* release device */
     i2c_release(dev->i2c_dev);
