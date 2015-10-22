@@ -145,18 +145,17 @@ typedef struct {
  * @param[in]   mqtt        mqtt connection object
  * @param[in]   msg         the message
  */
-int mqttsn_process_msg(
-        msg_t msg
-        );
+int mqttsn_process_msg(msg_t msg);
 
 /**
  * @brief establish the connection
  *
  * @param[in]   mqtt        mqtt connection object
- * @param[in]   will_msg    either a will message or NULL if no will is to
- *                          be set
- * @param[in]   will_topic  the topic to which the will_msg will be sent
- * @param[out]  will_id     will be set to the id of will_topic
+ * @param[in]   address     server address
+ * @param[in]   port        server port
+ * @param[in]   client_id   client identification string
+ * @param[in]   client_id_len
+ *                          length of the client identification string
  */
 int mqttsn_connect(
         mqttsn_state_t *mqtt,
@@ -164,10 +163,16 @@ int mqttsn_connect(
         uint16_t port,
         char *client_id,
         size_t client_id_len,
+#if 0
+ * @param[in]   will_msg    either a will message or NULL if no will is to
+ *                          be set
+ * @param[in]   will_topic  the topic to which the will_msg will be sent
+ * @param[out]  will_id     will be set to the id of will_topic
         char *will_topic,
         char *will_msg,
         uint16_t *will_id,
         int clean_session,
+#endif
         );
 
 int mqttsn_disconnect(
