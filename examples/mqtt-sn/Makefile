@@ -9,9 +9,12 @@ RIOTBASE ?= $(CURDIR)/../..
 
 BOARD_INSUFFICIENT_MEMORY := 
 
-# The application layer
-USEMODULE += mqttsn
+# application includes
 #INCLUDES += ./
+
+# MQTT-SN
+USEMODULE += mqttsn
+USEMODULE += gnrc_conn_udp
 
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
@@ -19,6 +22,10 @@ USEMODULE += gnrc_netif_default
 USEMODULE += auto_init_gnrc_netif
 # Specify the mandatory networking modules for IPv6 and UDP
 USEMODULE += gnrc_ipv6_router_default
+# shell + commands
+USEMODULE += shell
+USEMODULE += shell_commands
+USEMODULE += ps
 
 # Comment this out to disable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
