@@ -74,9 +74,20 @@ typedef struct __attribute__((packed)) {
     uint8_t ret_code;
 } mqttsn_msg_connack;
 
-int mqttsn_connect(mqttsn_state_t *mqtt, ipv6_addr_t address, char *client_id,
-                   size_t client_id_len, uint16_t port, char *will_topic, char *will_msg,
-                   uint16_t *will_id, int clean_session) {
+int mqttsn_connect(
+        mqttsn_state_t *mqtt,
+        ipv6_addr_t address,
+        uint16_t port,
+        char *client_id,
+        size_t client_id_len,
+#if 0
+        char *will_topic,
+        char *will_msg,
+        uint16_t *will_id,
+        int clean_session,
+#endif
+        )
+{
     ipv6_addr_t src;
     uint16_t sport, rcv_port;
     ipv6_addr_t rcv_addr;

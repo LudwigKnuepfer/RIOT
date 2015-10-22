@@ -122,8 +122,8 @@
 #include <inttypes.h>
 
 #include "msg.h"
-// #include "ipv6.h" // where is it?
-#include "socket_base/socket.h"
+#include "net/ipv6.h"
+#include "net/conn/udp.h"
 
 typedef enum {
     MQTTSN_QOS_AT_LEAST_ONCE,
@@ -162,7 +162,7 @@ int mqttsn_connect(
         ipv6_addr_t address,
         uint16_t port,
         char *client_id,
-        size_t client_id_len,
+        size_t client_id_len
 #if 0
  * @param[in]   will_msg    either a will message or NULL if no will is to
  *                          be set
@@ -181,7 +181,7 @@ int mqttsn_disconnect(
 
 int mqttsn_register_topic(
         char *topic_name,
-        uint16_t *topic_id,
+        uint16_t *topic_id
         );
 
 int mqttsn_publish(mqttsn_state_t mqtt,
@@ -190,11 +190,11 @@ int mqttsn_publish(mqttsn_state_t mqtt,
         );
 
 int mqttsn_subscribe(mqttsn_state_t mqtt,
-        uint16_t topic_id,
+        uint16_t topic_id
         );
 
 int mqttsn_unsubscribe(
-        uint16_t topic_id,
+        uint16_t topic_id
         );
 
-#endif __MQTTSN_H
+#endif /* __MQTTSN_H */
