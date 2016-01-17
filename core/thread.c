@@ -30,6 +30,9 @@
 #include "bitarithm.h"
 #include "sched.h"
 
+#include "panic.h"
+#include "checksum/crc16_ccitt.h"
+
 volatile thread_t *thread_get(kernel_pid_t pid)
 {
     if (pid_is_valid(pid)) {
@@ -124,7 +127,7 @@ void thread_add_to_list(list_node_t *list, thread_t *thread)
     list->next = new_node;
 }
 
-#ifdef DEVELHELP
+#if defined(DEVELHELP) || 1
 uintptr_t thread_measure_stack_free(char *stack)
 {
     uintptr_t *stackp = (uintptr_t *)stack;
@@ -146,8 +149,11 @@ kernel_pid_t thread_create(char *stack, int stacksize, char priority, int flags,
         return -EINVAL;
     }
 
-#ifdef DEVELHELP
+#if defined(DEVELHELP)
     int total_stacksize = stacksize;
+#elif 1
+    int total_stacksize = stacksize;
+    (void) name;
 #else
     (void) name;
 #endif
@@ -172,7 +178,7 @@ kernel_pid_t thread_create(char *stack, int stacksize, char priority, int flags,
     /* allocate our thread control block at the top of our stackspace */
     thread_t *cb = (thread_t *) (stack + stacksize);
 
-#if defined(DEVELHELP) || defined(SCHED_TEST_STACK)
+#if defined(DEVELHELP) || defined(SCHED_TEST_STACK) || 1
     if (flags & THREAD_CREATE_STACKTEST) {
         /* assign each int of the stack the value of it's address */
         uintptr_t *stackmax = (uintptr_t *) (stack + stacksize);
@@ -211,14 +217,18 @@ kernel_pid_t thread_create(char *stack, int stacksize, char priority, int flags,
     cb->pid = pid;
     cb->sp = thread_stack_init(function, arg, stack, stacksize);
 
-#if defined(DEVELHELP) || defined(SCHED_TEST_STACK) || defined(MODULE_MPU_STACK_GUARD)
+#if defined(DEVELHELP) || defined(SCHED_TEST_STACK) || defined(MODULE_MPU_STACK_GUARD) || 1
     cb->stack_start = stack;
 #endif
 
-#ifdef DEVELHELP
+#if defined(DEVELHELP) || 1
     cb->stack_size = total_stacksize;
+#endif
+#ifdef DEVELHELP
     cb->name = name;
 #endif
+
+    thread_debrief(cb);
 
     cb->priority = priority;
     cb->status = 0;
@@ -252,4 +262,20 @@ kernel_pid_t thread_create(char *stack, int stacksize, char priority, int flags,
     irq_restore(state);
 
     return pid;
+}
+
+void thread_brief(volatile thread_t *thread)
+{
+    if ((thread->crc) != (crc16_ccitt_calc(
+                    (unsigned char *) thread->stack_start,
+                    thread->stack_size - sizeof(thread_t)))) {
+        core_panic(PANIC_THREAD_STACK, "thread crc mismatch");
+    }
+}
+
+void thread_debrief(volatile thread_t *thread)
+{
+    thread->crc = crc16_ccitt_calc(
+            (unsigned char *) thread->stack_start,
+            thread->stack_size - sizeof(thread_t));
 }

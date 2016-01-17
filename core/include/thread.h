@@ -189,13 +189,16 @@ struct _thread {
     msg_t *msg_array;               /**< memory holding messages        */
 #endif
 
-#if defined(DEVELHELP) || defined(SCHED_TEST_STACK) || defined(MODULE_MPU_STACK_GUARD)
+#if defined(DEVELHELP) || defined(SCHED_TEST_STACK) || defined(MODULE_MPU_STACK_GUARD) || 1
     char *stack_start;              /**< thread's stack start address   */
 #endif
 #ifdef DEVELHELP
     const char *name;               /**< thread's name                  */
+#endif
+#if defined(DEVELHELP) || 1
     int stack_size;                 /**< thread's stack size            */
 #endif
+    uint16_t crc;                   /**< thread's stack checksum        */
 };
 
 /**
@@ -461,6 +464,9 @@ uintptr_t thread_measure_stack_free(char *stack);
  * @brief   Prints human readable, ps-like thread information for debugging purposes
  */
 void thread_print_stack(void);
+
+void thread_brief(volatile thread_t *thread);
+void thread_debrief(volatile thread_t *thread);
 
 #ifdef __cplusplus
 }

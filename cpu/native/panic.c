@@ -29,5 +29,7 @@ void panic_arch(void)
     /* since we're atop an Unix-like platform,
        just use the (developer-)friendly core-dump feature */
     kill(_native_pid, SIGTRAP);
+#else
+    kill(_native_pid, SIGKILL);
 #endif
 }

@@ -569,6 +569,8 @@ ifneq (,$(filter random,$(USEMODULE)))
     endif
 endif
 
+USEMODULE += checksum
+
 # include package dependencies
 -include $(USEPKG:%=$(RIOTPKG)/%/Makefile.dep)
 

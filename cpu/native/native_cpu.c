@@ -146,6 +146,8 @@ void isr_cpu_switch_context_exit(void)
         sched_run();
     }
 
+    thread_brief(sched_active_thread);
+
     DEBUG("isr_cpu_switch_context_exit: calling setcontext(%" PRIkernel_pid ")\n\n", sched_active_pid);
     ctx = (ucontext_t *)(sched_active_thread->sp);
 
@@ -189,12 +191,10 @@ void isr_thread_yield(void)
 {
     DEBUG("isr_thread_yield\n");
 
-    if (_native_sigpend > 0) {
-        DEBUG("isr_thread_yield(): handling signals\n\n");
-        native_irq_handler();
-    }
-
+    thread_debrief(sched_active_thread);
     sched_run();
+    thread_brief(sched_active_thread);
+
     ucontext_t *ctx = (ucontext_t *)(sched_active_thread->sp);
     DEBUG("isr_thread_yield: switching to(%" PRIkernel_pid ")\n\n", sched_active_pid);
 
