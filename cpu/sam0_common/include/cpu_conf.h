@@ -33,7 +33,7 @@ extern "C" {
  */
 #define CPU_DEFAULT_IRQ_PRIO            (1U)
 #define CPU_IRQ_NUMOF                   PERIPH_COUNT_IRQn
-#define CPU_FLASH_BASE                  FLASH_ADDR
+#define CPU_FLASH_BASE                  (0x0000fa00)
 /** @} */
 
 #ifdef __cplusplus
