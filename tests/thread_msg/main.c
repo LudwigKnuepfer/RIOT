@@ -30,38 +30,38 @@ char t3_stack[THREAD_STACKSIZE_MAIN];
 
 kernel_pid_t p1, p2, p3;
 
+msg_t thread1_inmsg, thread1_reply;
 void *thread1(void *arg)
 {
     (void) arg;
     puts("THREAD 1 start\n");
 
     for (int i = 0; i < 3; ++i) {
-        msg_t msg, reply;
+        msg_receive(&thread1_inmsg);
+        printf("T1 recv: %" PRIu32 "(i=%d)\n", thread1_inmsg.content.value, i);
 
-        msg_receive(&msg);
-        printf("T1 recv: %" PRIu32 "(i=%d)\n", msg.content.value, i);
-
-        msg.content.value = i;
-        msg_send_receive(&msg, &reply, p2);
-        printf("T1 got reply: %" PRIu32 " (i=%d)\n", reply.content.value, i);
+        thread1_inmsg.content.value = i;
+        msg_send_receive(&thread1_inmsg, &thread1_reply, p2);
+        printf("T1 got reply: %" PRIu32 " (i=%d)\n", thread1_reply.content.value, i);
     }
 
     puts("THREAD 1 end\n");
     return NULL;
 }
 
+msg_t thread2_inmsg;
 void *thread2(void *arg)
 {
     (void) arg;
     puts("THREAD 2\n");
 
     for (int i = 0;; ++i) {
-        msg_t msg, reply;
+        msg_t reply;
 
-        msg_receive(&msg);
-        printf("T2 got %" PRIu32 " (i=%d)\n", msg.content.value, i);
-        reply.content.value = msg.content.value;
-        msg_reply(&msg, &reply);
+        msg_receive(&thread2_inmsg);
+        printf("T2 got %" PRIu32 " (i=%d)\n", thread2_inmsg.content.value, i);
+        reply.content.value = thread2_inmsg.content.value;
+        msg_reply(&thread2_inmsg, &reply);
     }
 
     return NULL;
